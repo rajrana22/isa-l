@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 	struct perf start;
 
 	// Pick test parameters
+	// @meng: this means 10+4 EC
 	m = 14;
 	k = 10;
 	nerrs = 4;
@@ -126,6 +127,7 @@ int main(int argc, char *argv[])
 
 	// Allocate the arrays
 	for (i = 0; i < m; i++) {
+		// @meng: allocate TEST_LEN(m) data for each disk
 		if (posix_memalign(&buf, 64, TEST_LEN(m))) {
 			printf("alloc error: Fail\n");
 			return -1;
@@ -134,6 +136,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < (m - k); i++) {
+		// @meng: this is for each parity disk. I guess it's for later calculation use
 		if (posix_memalign(&buf, 64, TEST_LEN(m))) {
 			printf("alloc error: Fail\n");
 			return -1;
@@ -142,6 +145,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Make random data
+	// generate a random u8
 	for (i = 0; i < k; i++)
 		for (j = 0; j < TEST_LEN(m); j++)
 			buffs[i][j] = rand();
