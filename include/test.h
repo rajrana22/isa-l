@@ -111,7 +111,8 @@ static inline long long get_res(void) {
 }
 #else
 #ifndef BENCHMARK_TIME
-# define BENCHMARK_TIME 3
+//# define BENCHMARK_TIME 3
+# define BENCHMARK_TIME 60
 #endif
 #ifdef _MSC_VER
 #define UNIT_SCALE get_res()

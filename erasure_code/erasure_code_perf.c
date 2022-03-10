@@ -36,13 +36,13 @@
 //#define CACHED_TEST
 #ifdef CACHED_TEST
 // Cached test, loop many times over small dataset
-# define TEST_SOURCES 32
+# define TEST_SOURCES 40
 # define TEST_LEN(m)  ((128*1024 / m) & ~(64-1))
 # define TEST_TYPE_STR "_warm"
 #else
 # ifndef TEST_CUSTOM
 // Uncached test.  Pull from large mem base.
-#  define TEST_SOURCES 32
+#  define TEST_SOURCES 40
 #  define GT_L3_CACHE  32*1024*1024	/* some number > last level cache */
 #  define TEST_LEN(m)  ((GT_L3_CACHE / m) & ~(64-1))
 #  define TEST_TYPE_STR "_cold"
@@ -111,7 +111,16 @@ int main(int argc, char *argv[])
 	m = 14;
 	k = 10;
 	nerrs = 4;
-	const u8 err_list[] = { 2, 4, 5, 7 };
+//	const u8 err_list[] = { 2, 4, 5, 7 };
+//	const u8 err_list[] = { 1, 2, 3, 4 };
+
+	if (argc < 3)
+		printf("./erasure_code_perf data_num parity_num\n");
+
+	k = atoi(argv[1]);
+	nerrs = atoi(argv[2]);
+	m = k + nerrs;
+	printf("data_num:%d parity_num:%d m:%d\n", k, nerrs, m);
 
 	printf("erasure_code_perf: %dx%d %d\n", m, TEST_LEN(m), nerrs);
 
@@ -120,7 +129,9 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	memcpy(src_err_list, err_list, nerrs);
+//	memcpy(src_err_list, err_list, nerrs);
+	for (i = 0; i < nerrs; i++)
+		src_err_list[i] = i;
 	memset(src_in_err, 0, TEST_SOURCES);
 	for (i = 0; i < nerrs; i++)
 		src_in_err[src_err_list[i]] = 1;
@@ -154,7 +165,8 @@ int main(int argc, char *argv[])
 
 	// Start encode test
 	ec_encode_perf(m, k, a, g_tbls, buffs, &start);
-	printf("erasure_code_encode" TEST_TYPE_STR ": ");
+//	printf("erasure_code_encode" TEST_TYPE_STR ": ");
+	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d : ", k, nerrs);
 	perf_print(start, (long long)(TEST_LEN(m)) * (m));
 
 	// Start decode test
@@ -168,12 +180,13 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < nerrs; i++) {
 		if (0 != memcmp(temp_buffs[i], buffs[src_err_list[i]], TEST_LEN(m))) {
-			printf("Fail error recovery (%d, %d, %d) - ", m, k, nerrs);
-			return -1;
+			printf("Fail error recovery (%d, %d, %d) - \n", m, k, nerrs);
+			// return -1;
 		}
 	}
 
-	printf("erasure_code_decode" TEST_TYPE_STR ": ");
+//	printf("erasure_code_decode" TEST_TYPE_STR ": ");
+	printf("erasure_code_decode" TEST_TYPE_STR " data_num:%d parity_num:%d : ", k, nerrs);
 	perf_print(start, (long long)(TEST_LEN(m)) * (k + nerrs));
 
 	printf("done all: Pass\n");
