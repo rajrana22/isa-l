@@ -33,7 +33,7 @@
 #include "erasure_code.h"
 #include "test.h"
 
-//#define CACHED_TEST
+// #define CACHED_TEST
 #ifdef CACHED_TEST
 // Cached test, loop many times over small dataset
 # define TEST_SOURCES 40
@@ -43,7 +43,8 @@
 # ifndef TEST_CUSTOM
 // Uncached test.  Pull from large mem base.
 #  define TEST_SOURCES 40
-#  define GT_L3_CACHE  32*1024*1024	/* some number > last level cache */
+//#  define GT_L3_CACHE  32*1024*1024	/* some number > last level cache */
+#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
 #  define TEST_LEN(m)  ((GT_L3_CACHE / m) & ~(64-1))
 #  define TEST_TYPE_STR "_cold"
 # else
