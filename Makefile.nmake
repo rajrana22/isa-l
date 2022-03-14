@@ -293,6 +293,7 @@ perfs = \
 	gf_vect_dot_prod_perf.exe \
 	gf_vect_dot_prod_1tbl.exe \
 	erasure_code_perf.exe \
+	erasure_code_perf_chunksize.exe \
 	erasure_code_base_perf.exe \
 	erasure_code_update_perf.exe \
 	xor_gen_perf.exe \
