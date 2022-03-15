@@ -44,8 +44,8 @@
 // Uncached test.  Pull from large mem base.
 #  define TEST_SOURCES 40
 //#  define GT_L3_CACHE  32*1024*1024	/* some number > last level cache */
-#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
-#  define TEST_LEN(m)  ((GT_L3_CACHE / m) & ~(64-1))
+//#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
+#  define TEST_LEN(chunksize, k)  ((chunksize*1024 / k) & ~(64-1))        // k is data units #
 #  define TEST_TYPE_STR "_cold"
 # else
 #  define TEST_TYPE_STR "_cus"
@@ -59,15 +59,15 @@
 
 typedef unsigned char u8;
 
-void ec_encode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, struct perf *start)
+void ec_encode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, struct perf *start, int chunksize)
 {
 	ec_init_tables(k, m - k, &a[k * k], g_tbls);
 	BENCHMARK(start, BENCHMARK_TIME,
-		  ec_encode_data(TEST_LEN(m), k, m - k, g_tbls, buffs, &buffs[k]));
+		  ec_encode_data(TEST_LEN(chunksize,k), k, m - k, g_tbls, buffs, &buffs[k]));
 }
 
 int ec_decode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_err,
-		   u8 * src_err_list, int nerrs, u8 ** temp_buffs, struct perf *start)
+		   u8 * src_err_list, int nerrs, u8 ** temp_buffs, struct perf *start, int chunksize)
 {
 	int i, j, r;
 	u8 b[MMAX * KMAX], c[MMAX * KMAX], d[MMAX * KMAX];
@@ -92,7 +92,7 @@ int ec_decode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_e
 	// Recover data
 	ec_init_tables(k, nerrs, c, g_tbls);
 	BENCHMARK(start, BENCHMARK_TIME,
-		  ec_encode_data(TEST_LEN(m), k, nerrs, g_tbls, recov, temp_buffs));
+		  ec_encode_data(TEST_LEN(chunksize,k), k, nerrs, g_tbls, recov, temp_buffs));
 
 	return 0;
 }
@@ -100,6 +100,7 @@ int ec_decode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_e
 int main(int argc, char *argv[])
 {
 	int i, j, m, k, nerrs, check;
+	int chunksize;
 	void *buf;
 	u8 *temp_buffs[TEST_SOURCES], *buffs[TEST_SOURCES];
 	u8 a[MMAX * KMAX];
@@ -115,15 +116,16 @@ int main(int argc, char *argv[])
 //	const u8 err_list[] = { 2, 4, 5, 7 };
 //	const u8 err_list[] = { 1, 2, 3, 4 };
 
-	if (argc < 3)
-		printf("./erasure_code_perf_erasure_code_perf data_num parity_num\n");
+	if (argc < 4)
+		printf("./erasure_code_perf_erasure_code_perf data_num parity_num chunksize\n");
 
 	k = atoi(argv[1]);
 	nerrs = atoi(argv[2]);
+	chunksize = atoi(argv[3]);
 	m = k + nerrs;
-	printf("data_num:%d parity_num:%d m:%d\n", k, nerrs, m);
+	printf("data_num:%d parity_num:%d m:%d chunksize:%d\n", k, nerrs, m, chunksize);
 
-	printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, TEST_LEN(m), nerrs);
+	printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, TEST_LEN(chunksize,k), nerrs);
 
 	if (m > MMAX || k > KMAX || nerrs > (m - k)) {
 		printf(" Input test parameter error\n");
@@ -139,8 +141,8 @@ int main(int argc, char *argv[])
 
 	// Allocate the arrays
 	for (i = 0; i < m; i++) {
-		// @meng: allocate TEST_LEN(m) data for each disk
-		if (posix_memalign(&buf, 64, TEST_LEN(m))) {
+		// @meng: allocate TEST_LEN(chunksize,k) data for each disk
+		if (posix_memalign(&buf, 64, TEST_LEN(chunksize, k))) {
 			printf("alloc error: Fail\n");
 			return -1;
 		}
@@ -149,7 +151,7 @@ int main(int argc, char *argv[])
 
 	for (i = 0; i < (m - k); i++) {
 		// @meng: this is for each parity disk. I guess it's for later calculation use
-		if (posix_memalign(&buf, 64, TEST_LEN(m))) {
+		if (posix_memalign(&buf, 64, TEST_LEN(chunksize, k))) {
 			printf("alloc error: Fail\n");
 			return -1;
 		}
@@ -159,20 +161,20 @@ int main(int argc, char *argv[])
 	// Make random data
 	// generate a random u8
 	for (i = 0; i < k; i++)
-		for (j = 0; j < TEST_LEN(m); j++)
+		for (j = 0; j < TEST_LEN(chunksize,k); j++)
 			buffs[i][j] = rand();
 
 	gf_gen_rs_matrix(a, m, k);
 
 	// Start encode test
-	ec_encode_perf(m, k, a, g_tbls, buffs, &start);
+	ec_encode_perf(m, k, a, g_tbls, buffs, &start, chunksize);
 //	printf("erasure_code_encode" TEST_TYPE_STR ": ");
-	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d : ", k, nerrs);
-	perf_print(start, (long long)(TEST_LEN(m)) * (m));
+	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
+	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * (k));
 
-	// Start decode test
+/*	// Start decode test
 	check = ec_decode_perf(m, k, a, g_tbls, buffs, src_in_err, src_err_list, nerrs,
-			       temp_buffs, &start);
+			       temp_buffs, &start, chunksize);
 
 	if (check == BAD_MATRIX) {
 		printf("BAD MATRIX\n");
@@ -180,16 +182,16 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < nerrs; i++) {
-		if (0 != memcmp(temp_buffs[i], buffs[src_err_list[i]], TEST_LEN(m))) {
+		if (0 != memcmp(temp_buffs[i], buffs[src_err_list[i]], TEST_LEN(chunksize,k))) {
 			printf("Fail error recovery (%d, %d, %d) - \n", m, k, nerrs);
 			// return -1;
 		}
 	}
 
 //	printf("erasure_code_decode" TEST_TYPE_STR ": ");
-	printf("erasure_code_decode" TEST_TYPE_STR " data_num:%d parity_num:%d : ", k, nerrs);
-	perf_print(start, (long long)(TEST_LEN(m)) * (k + nerrs));
-
+	printf("erasure_code_decode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
+	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * (k));
+*/
 	printf("done all: Pass\n");
 	return 0;
 }
