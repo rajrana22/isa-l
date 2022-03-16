@@ -118,6 +118,7 @@ perf_tests32 += erasure_code/gf_vect_mul_perf \
 		erasure_code/gf_vect_dot_prod_perf \
 		erasure_code/erasure_code_perf \
 		erasure_code/erasure_code_perf_chunksize \
+		erasure_code/erasure_code_perf_chunksize_cold \
 		erasure_code/erasure_code_base_perf \
 		erasure_code/gf_vect_dot_prod_1tbl
 
@@ -146,6 +147,7 @@ perf_tests   += erasure_code/gf_vect_mul_perf \
 		erasure_code/gf_vect_dot_prod_1tbl \
 		erasure_code/erasure_code_perf \
 		erasure_code/erasure_code_perf_chunksize \
+		erasure_code/erasure_code_perf_chunksize_cold \
 		erasure_code/erasure_code_base_perf \
 		erasure_code/erasure_code_update_perf
 
