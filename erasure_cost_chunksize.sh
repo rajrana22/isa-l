@@ -4,9 +4,10 @@
 benchmark(){
   n=$1
   k=$2
-  for chunksize in {128,256,512,1024,1024*2,1024*4,1024*8,1024*16,1024*32}
+  for chunksize in {1,2,4,8,16,32,64,128,256,512,1024}
   do
     erasure_code/erasure_code_perf_chunksize $n  $k $chunksize
+    erasure_code/erasure_code_perf_chunksize $n  $k $(($chunksize*1024))
   done
 }
 
