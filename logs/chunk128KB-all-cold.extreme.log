@@ -1,0 +1,1200 @@
+data_num:27 parity_num:1 m:28 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 28x4800 1
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:1 chunksize:128 : runtime =   10281187 usecs, bandwidth 98736 MB in 10.2812 sec = 9603.61 MB/s
+done all: Pass
+data_num:27 parity_num:2 m:29 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 29x4800 2
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:2 chunksize:128 : runtime =    9984594 usecs, bandwidth 75379 MB in 9.9846 sec = 7549.58 MB/s
+done all: Pass
+data_num:27 parity_num:3 m:30 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 30x4800 3
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:3 chunksize:128 : runtime =   10063963 usecs, bandwidth 56269 MB in 10.0640 sec = 5591.16 MB/s
+done all: Pass
+data_num:27 parity_num:4 m:31 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 31x4800 4
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:4 chunksize:128 : runtime =   10165677 usecs, bandwidth 45652 MB in 10.1657 sec = 4490.83 MB/s
+done all: Pass
+data_num:27 parity_num:5 m:32 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 32x4800 5
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:5 chunksize:128 : runtime =    9997258 usecs, bandwidth 31850 MB in 9.9973 sec = 3185.92 MB/s
+done all: Pass
+data_num:27 parity_num:6 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4800 6
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:6 chunksize:128 : runtime =   10297134 usecs, bandwidth 30788 MB in 10.2971 sec = 2990.04 MB/s
+done all: Pass
+data_num:27 parity_num:7 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4800 7
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:7 chunksize:128 : runtime =   10126532 usecs, bandwidth 27603 MB in 10.1265 sec = 2725.89 MB/s
+done all: Pass
+data_num:27 parity_num:8 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4800 8
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:8 chunksize:128 : runtime =   10065269 usecs, bandwidth 25480 MB in 10.0653 sec = 2531.52 MB/s
+done all: Pass
+data_num:27 parity_num:9 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4800 9
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:9 chunksize:128 : runtime =   10291886 usecs, bandwidth 23357 MB in 10.2919 sec = 2269.46 MB/s
+done all: Pass
+data_num:27 parity_num:10 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4800 10
+chunks:8192
+helloerasure_code_encode_cold data_num:27 parity_num:10 chunksize:128 : runtime =   10131199 usecs, bandwidth 21233 MB in 10.1312 sec = 2095.87 MB/s
+done all: Pass
+data_num:28 parity_num:1 m:29 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 29x4672 1
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:1 chunksize:128 : runtime =   10021623 usecs, bandwidth 96448 MB in 10.0216 sec = 9623.99 MB/s
+done all: Pass
+data_num:28 parity_num:2 m:30 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 30x4672 2
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:2 chunksize:128 : runtime =    9996430 usecs, bandwidth 77158 MB in 9.9964 sec = 7718.60 MB/s
+done all: Pass
+data_num:28 parity_num:3 m:31 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 31x4672 3
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:3 chunksize:128 : runtime =   10176140 usecs, bandwidth 56797 MB in 10.1761 sec = 5581.41 MB/s
+done all: Pass
+data_num:28 parity_num:4 m:32 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 32x4672 4
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:4 chunksize:128 : runtime =   10150733 usecs, bandwidth 41794 MB in 10.1507 sec = 4117.35 MB/s
+done all: Pass
+data_num:28 parity_num:5 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4672 5
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:5 chunksize:128 : runtime =   10235068 usecs, bandwidth 34292 MB in 10.2351 sec = 3350.50 MB/s
+done all: Pass
+data_num:28 parity_num:6 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4672 6
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:6 chunksize:128 : runtime =   10111946 usecs, bandwidth 28934 MB in 10.1119 sec = 2861.41 MB/s
+done all: Pass
+data_num:28 parity_num:7 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4672 7
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:7 chunksize:128 : runtime =   10253868 usecs, bandwidth 26791 MB in 10.2539 sec = 2612.78 MB/s
+done all: Pass
+data_num:28 parity_num:8 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4672 8
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:8 chunksize:128 : runtime =   10154971 usecs, bandwidth 24647 MB in 10.1550 sec = 2427.17 MB/s
+done all: Pass
+data_num:28 parity_num:9 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4672 9
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:9 chunksize:128 : runtime =   10433316 usecs, bandwidth 22504 MB in 10.4333 sec = 2156.99 MB/s
+done all: Pass
+data_num:28 parity_num:10 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x4672 10
+chunks:8192
+helloerasure_code_encode_cold data_num:28 parity_num:10 chunksize:128 : runtime =   10427135 usecs, bandwidth 21432 MB in 10.4271 sec = 2055.49 MB/s
+done all: Pass
+data_num:29 parity_num:1 m:30 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 30x4480 1
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:1 chunksize:128 : runtime =    9973084 usecs, bandwidth 103237 MB in 9.9731 sec = 10351.62 MB/s
+done all: Pass
+data_num:29 parity_num:2 m:31 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 31x4480 2
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:2 chunksize:128 : runtime =    9930930 usecs, bandwidth 79822 MB in 9.9309 sec = 8037.80 MB/s
+done all: Pass
+data_num:29 parity_num:3 m:32 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 32x4480 3
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:3 chunksize:128 : runtime =   10099594 usecs, bandwidth 55343 MB in 10.0996 sec = 5479.81 MB/s
+done all: Pass
+data_num:29 parity_num:4 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4480 4
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:4 chunksize:128 : runtime =   10257428 usecs, bandwidth 45765 MB in 10.2574 sec = 4461.65 MB/s
+done all: Pass
+data_num:29 parity_num:5 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4480 5
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:5 chunksize:128 : runtime =    9967428 usecs, bandwidth 34057 MB in 9.9674 sec = 3416.90 MB/s
+done all: Pass
+data_num:29 parity_num:6 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4480 6
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:6 chunksize:128 : runtime =   10392434 usecs, bandwidth 29800 MB in 10.3924 sec = 2867.52 MB/s
+done all: Pass
+data_num:29 parity_num:7 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4480 7
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:7 chunksize:128 : runtime =   10387260 usecs, bandwidth 26607 MB in 10.3873 sec = 2561.56 MB/s
+done all: Pass
+data_num:29 parity_num:8 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4480 8
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:8 chunksize:128 : runtime =   10260506 usecs, bandwidth 24479 MB in 10.2605 sec = 2385.75 MB/s
+done all: Pass
+data_num:29 parity_num:9 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x4480 9
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:9 chunksize:128 : runtime =   10285450 usecs, bandwidth 22350 MB in 10.2855 sec = 2173.01 MB/s
+done all: Pass
+data_num:29 parity_num:10 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x4480 10
+chunks:8192
+helloerasure_code_encode_cold data_num:29 parity_num:10 chunksize:128 : runtime =   10501702 usecs, bandwidth 21286 MB in 10.5017 sec = 2026.92 MB/s
+done all: Pass
+data_num:30 parity_num:1 m:31 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 31x4352 1
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:1 chunksize:128 : runtime =    9973835 usecs, bandwidth 102676 MB in 9.9738 sec = 10294.59 MB/s
+done all: Pass
+data_num:30 parity_num:2 m:32 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 32x4352 2
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:2 chunksize:128 : runtime =    9920707 usecs, bandwidth 78076 MB in 9.9207 sec = 7870.10 MB/s
+done all: Pass
+data_num:30 parity_num:3 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4352 3
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:3 chunksize:128 : runtime =   10115683 usecs, bandwidth 56686 MB in 10.1157 sec = 5603.78 MB/s
+done all: Pass
+data_num:30 parity_num:4 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4352 4
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:4 chunksize:128 : runtime =   10120094 usecs, bandwidth 43851 MB in 10.1201 sec = 4333.11 MB/s
+done all: Pass
+data_num:30 parity_num:5 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4352 5
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:5 chunksize:128 : runtime =   10177059 usecs, bandwidth 28877 MB in 10.1771 sec = 2837.54 MB/s
+done all: Pass
+data_num:30 parity_num:6 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4352 6
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:6 chunksize:128 : runtime =   10192292 usecs, bandwidth 21390 MB in 10.1923 sec = 2098.74 MB/s
+done all: Pass
+data_num:30 parity_num:7 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4352 7
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:7 chunksize:128 : runtime =   10125960 usecs, bandwidth 20321 MB in 10.1260 sec = 2006.86 MB/s
+done all: Pass
+data_num:30 parity_num:8 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x4352 8
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:8 chunksize:128 : runtime =   10324951 usecs, bandwidth 19251 MB in 10.3250 sec = 1864.60 MB/s
+done all: Pass
+data_num:30 parity_num:9 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x4352 9
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:9 chunksize:128 : runtime =   10310825 usecs, bandwidth 18182 MB in 10.3108 sec = 1763.42 MB/s
+done all: Pass
+data_num:30 parity_num:10 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x4352 10
+chunks:8192
+helloerasure_code_encode_cold data_num:30 parity_num:10 chunksize:128 : runtime =   10044039 usecs, bandwidth 17112 MB in 10.0440 sec = 1703.77 MB/s
+done all: Pass
+data_num:31 parity_num:1 m:32 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 32x4224 1
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:1 chunksize:128 : runtime =    9920384 usecs, bandwidth 101905 MB in 9.9204 sec = 10272.37 MB/s
+done all: Pass
+data_num:31 parity_num:2 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4224 2
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:2 chunksize:128 : runtime =   10022014 usecs, bandwidth 82597 MB in 10.0220 sec = 8241.59 MB/s
+done all: Pass
+data_num:31 parity_num:3 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4224 3
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:3 chunksize:128 : runtime =   10212312 usecs, bandwidth 45053 MB in 10.2123 sec = 4411.65 MB/s
+done all: Pass
+data_num:31 parity_num:4 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4224 4
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:4 chunksize:128 : runtime =   10253816 usecs, bandwidth 30035 MB in 10.2538 sec = 2929.19 MB/s
+done all: Pass
+data_num:31 parity_num:5 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4224 5
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:5 chunksize:128 : runtime =   10223092 usecs, bandwidth 24671 MB in 10.2231 sec = 2413.35 MB/s
+done all: Pass
+data_num:31 parity_num:6 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4224 6
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:6 chunksize:128 : runtime =   10225219 usecs, bandwidth 22526 MB in 10.2252 sec = 2203.04 MB/s
+done all: Pass
+data_num:31 parity_num:7 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x4224 7
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:7 chunksize:128 : runtime =   10375067 usecs, bandwidth 20381 MB in 10.3751 sec = 1964.44 MB/s
+done all: Pass
+data_num:31 parity_num:8 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x4224 8
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:8 chunksize:128 : runtime =   10421513 usecs, bandwidth 19308 MB in 10.4215 sec = 1852.75 MB/s
+done all: Pass
+data_num:31 parity_num:9 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x4224 9
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:9 chunksize:128 : runtime =   10389626 usecs, bandwidth 18235 MB in 10.3896 sec = 1755.19 MB/s
+done all: Pass
+data_num:31 parity_num:10 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x4224 10
+chunks:8192
+helloerasure_code_encode_cold data_num:31 parity_num:10 chunksize:128 : runtime =   10155532 usecs, bandwidth 17163 MB in 10.1555 sec = 1690.02 MB/s
+done all: Pass
+data_num:32 parity_num:1 m:33 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 33x4096 1
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:1 chunksize:128 : runtime =    9934321 usecs, bandwidth 102005 MB in 9.9343 sec = 10267.99 MB/s
+done all: Pass
+data_num:32 parity_num:2 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x4096 2
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:2 chunksize:128 : runtime =   10132529 usecs, bandwidth 69793 MB in 10.1325 sec = 6888.04 MB/s
+done all: Pass
+data_num:32 parity_num:3 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x4096 3
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:3 chunksize:128 : runtime =   10269935 usecs, bandwidth 36507 MB in 10.2699 sec = 3554.77 MB/s
+done all: Pass
+data_num:32 parity_num:4 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x4096 4
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:4 chunksize:128 : runtime =   10258907 usecs, bandwidth 30064 MB in 10.2589 sec = 2930.60 MB/s
+done all: Pass
+data_num:32 parity_num:5 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x4096 5
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:5 chunksize:128 : runtime =   10044525 usecs, bandwidth 25769 MB in 10.0445 sec = 2565.56 MB/s
+done all: Pass
+data_num:32 parity_num:6 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x4096 6
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:6 chunksize:128 : runtime =    9974175 usecs, bandwidth 23622 MB in 9.9742 sec = 2368.35 MB/s
+done all: Pass
+data_num:32 parity_num:7 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x4096 7
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:7 chunksize:128 : runtime =   10526628 usecs, bandwidth 22548 MB in 10.5266 sec = 2142.05 MB/s
+done all: Pass
+data_num:32 parity_num:8 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x4096 8
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:8 chunksize:128 : runtime =   10145122 usecs, bandwidth 20401 MB in 10.1451 sec = 2010.93 MB/s
+done all: Pass
+data_num:32 parity_num:9 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x4096 9
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:9 chunksize:128 : runtime =   10439288 usecs, bandwidth 19327 MB in 10.4393 sec = 1851.41 MB/s
+done all: Pass
+data_num:32 parity_num:10 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x4096 10
+chunks:8192
+helloerasure_code_encode_cold data_num:32 parity_num:10 chunksize:128 : runtime =   10303515 usecs, bandwidth 18253 MB in 10.3035 sec = 1771.59 MB/s
+done all: Pass
+data_num:33 parity_num:1 m:34 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 34x3968 1
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:1 chunksize:128 : runtime =   10204775 usecs, bandwidth 57925 MB in 10.2048 sec = 5676.31 MB/s
+done all: Pass
+data_num:33 parity_num:2 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x3968 2
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:2 chunksize:128 : runtime =   10443293 usecs, bandwidth 27890 MB in 10.4433 sec = 2670.62 MB/s
+done all: Pass
+data_num:33 parity_num:3 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x3968 3
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:3 chunksize:128 : runtime =   10244220 usecs, bandwidth 20381 MB in 10.2442 sec = 1989.53 MB/s
+done all: Pass
+data_num:33 parity_num:4 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x3968 4
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:4 chunksize:128 : runtime =   10088162 usecs, bandwidth 16090 MB in 10.0882 sec = 1594.98 MB/s
+done all: Pass
+data_num:33 parity_num:5 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x3968 5
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:5 chunksize:128 : runtime =   10459459 usecs, bandwidth 16090 MB in 10.4595 sec = 1538.36 MB/s
+done all: Pass
+data_num:33 parity_num:6 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3968 6
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:6 chunksize:128 : runtime =   10723649 usecs, bandwidth 13945 MB in 10.7236 sec = 1300.40 MB/s
+done all: Pass
+data_num:33 parity_num:7 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3968 7
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:7 chunksize:128 : runtime =   10663045 usecs, bandwidth 12872 MB in 10.6630 sec = 1207.19 MB/s
+done all: Pass
+data_num:33 parity_num:8 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3968 8
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:8 chunksize:128 : runtime =   10925375 usecs, bandwidth 12872 MB in 10.9254 sec = 1178.20 MB/s
+done all: Pass
+data_num:33 parity_num:9 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3968 9
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:9 chunksize:128 : runtime =   10657893 usecs, bandwidth 11799 MB in 10.6579 sec = 1107.13 MB/s
+done all: Pass
+data_num:33 parity_num:10 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3968 10
+chunks:8192
+helloerasure_code_encode_cold data_num:33 parity_num:10 chunksize:128 : runtime =   10597398 usecs, bandwidth 11799 MB in 10.5974 sec = 1113.45 MB/s
+done all: Pass
+data_num:34 parity_num:1 m:35 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 35x3840 1
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:1 chunksize:128 : runtime =   10053698 usecs, bandwidth 79146 MB in 10.0537 sec = 7872.38 MB/s
+done all: Pass
+data_num:34 parity_num:2 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x3840 2
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:2 chunksize:128 : runtime =   10191427 usecs, bandwidth 28877 MB in 10.1914 sec = 2833.54 MB/s
+done all: Pass
+data_num:34 parity_num:3 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x3840 3
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:3 chunksize:128 : runtime =   10152027 usecs, bandwidth 21390 MB in 10.1520 sec = 2107.06 MB/s
+done all: Pass
+data_num:34 parity_num:4 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x3840 4
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:4 chunksize:128 : runtime =   10034519 usecs, bandwidth 17112 MB in 10.0345 sec = 1705.39 MB/s
+done all: Pass
+data_num:34 parity_num:5 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3840 5
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:5 chunksize:128 : runtime =   10528753 usecs, bandwidth 17112 MB in 10.5288 sec = 1625.34 MB/s
+done all: Pass
+data_num:34 parity_num:6 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3840 6
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:6 chunksize:128 : runtime =   10609169 usecs, bandwidth 14973 MB in 10.6092 sec = 1411.39 MB/s
+done all: Pass
+data_num:34 parity_num:7 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3840 7
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:7 chunksize:128 : runtime =   10697564 usecs, bandwidth 13904 MB in 10.6976 sec = 1299.75 MB/s
+done all: Pass
+data_num:34 parity_num:8 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3840 8
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:8 chunksize:128 : runtime =   10197185 usecs, bandwidth 12834 MB in 10.1972 sec = 1258.64 MB/s
+done all: Pass
+data_num:34 parity_num:9 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3840 9
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:9 chunksize:128 : runtime =   10812890 usecs, bandwidth 12834 MB in 10.8129 sec = 1186.97 MB/s
+done all: Pass
+data_num:34 parity_num:10 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3840 10
+chunks:8192
+helloerasure_code_encode_cold data_num:34 parity_num:10 chunksize:128 : runtime =   10859038 usecs, bandwidth 12834 MB in 10.8590 sec = 1181.93 MB/s
+done all: Pass
+data_num:35 parity_num:1 m:36 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 36x3712 1
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:1 chunksize:128 : runtime =   10003033 usecs, bandwidth 77694 MB in 10.0030 sec = 7767.07 MB/s
+done all: Pass
+data_num:35 parity_num:2 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x3712 2
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:2 chunksize:128 : runtime =   10295027 usecs, bandwidth 28736 MB in 10.2950 sec = 2791.27 MB/s
+done all: Pass
+data_num:35 parity_num:3 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x3712 3
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:3 chunksize:128 : runtime =   10209733 usecs, bandwidth 21286 MB in 10.2097 sec = 2084.88 MB/s
+done all: Pass
+data_num:35 parity_num:4 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3712 4
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:4 chunksize:128 : runtime =   10327845 usecs, bandwidth 18093 MB in 10.3278 sec = 1751.88 MB/s
+done all: Pass
+data_num:35 parity_num:5 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3712 5
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:5 chunksize:128 : runtime =   10342956 usecs, bandwidth 17028 MB in 10.3430 sec = 1646.42 MB/s
+done all: Pass
+data_num:35 parity_num:6 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3712 6
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:6 chunksize:128 : runtime =   10686002 usecs, bandwidth 14900 MB in 10.6860 sec = 1394.37 MB/s
+done all: Pass
+data_num:35 parity_num:7 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3712 7
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:7 chunksize:128 : runtime =   10435417 usecs, bandwidth 13835 MB in 10.4354 sec = 1325.87 MB/s
+done all: Pass
+data_num:35 parity_num:8 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3712 8
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:8 chunksize:128 : runtime =   10335153 usecs, bandwidth 12771 MB in 10.3352 sec = 1235.75 MB/s
+done all: Pass
+data_num:35 parity_num:9 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3712 9
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:9 chunksize:128 : runtime =   10832793 usecs, bandwidth 12771 MB in 10.8328 sec = 1178.98 MB/s
+done all: Pass
+data_num:35 parity_num:10 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3712 10
+chunks:8192
+helloerasure_code_encode_cold data_num:35 parity_num:10 chunksize:128 : runtime =   10231623 usecs, bandwidth 11707 MB in 10.2316 sec = 1144.23 MB/s
+done all: Pass
+data_num:36 parity_num:1 m:37 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 37x3584 1
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:1 chunksize:128 : runtime =   10033516 usecs, bandwidth 82443 MB in 10.0335 sec = 8216.78 MB/s
+done all: Pass
+data_num:36 parity_num:2 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x3584 2
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:2 chunksize:128 : runtime =   10378767 usecs, bandwidth 30651 MB in 10.3788 sec = 2953.33 MB/s
+done all: Pass
+data_num:36 parity_num:3 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3584 3
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:3 chunksize:128 : runtime =   10290942 usecs, bandwidth 21139 MB in 10.2909 sec = 2054.16 MB/s
+done all: Pass
+data_num:36 parity_num:4 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3584 4
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:4 chunksize:128 : runtime =    9984658 usecs, bandwidth 16911 MB in 9.9847 sec = 1693.74 MB/s
+done all: Pass
+data_num:36 parity_num:5 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3584 5
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:5 chunksize:128 : runtime =   10263842 usecs, bandwidth 15854 MB in 10.2638 sec = 1544.69 MB/s
+done all: Pass
+data_num:36 parity_num:6 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3584 6
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:6 chunksize:128 : runtime =   10043182 usecs, bandwidth 13740 MB in 10.0432 sec = 1368.15 MB/s
+done all: Pass
+data_num:36 parity_num:7 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3584 7
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:7 chunksize:128 : runtime =   10675342 usecs, bandwidth 13740 MB in 10.6753 sec = 1287.13 MB/s
+done all: Pass
+data_num:36 parity_num:8 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3584 8
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:8 chunksize:128 : runtime =   10515513 usecs, bandwidth 12683 MB in 10.5155 sec = 1206.18 MB/s
+done all: Pass
+data_num:36 parity_num:9 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3584 9
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:9 chunksize:128 : runtime =   10164007 usecs, bandwidth 11626 MB in 10.1640 sec = 1143.90 MB/s
+done all: Pass
+data_num:36 parity_num:10 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3584 10
+chunks:8192
+helloerasure_code_encode_cold data_num:36 parity_num:10 chunksize:128 : runtime =   10242786 usecs, bandwidth 11626 MB in 10.2428 sec = 1135.10 MB/s
+done all: Pass
+data_num:37 parity_num:1 m:38 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 38x3520 1
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:1 chunksize:128 : runtime =   10101274 usecs, bandwidth 78952 MB in 10.1013 sec = 7816.10 MB/s
+done all: Pass
+data_num:37 parity_num:2 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3520 2
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:2 chunksize:128 : runtime =   10173884 usecs, bandwidth 38409 MB in 10.1739 sec = 3775.29 MB/s
+done all: Pass
+data_num:37 parity_num:3 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3520 3
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:3 chunksize:128 : runtime =   10002903 usecs, bandwidth 24539 MB in 10.0029 sec = 2453.22 MB/s
+done all: Pass
+data_num:37 parity_num:4 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3520 4
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:4 chunksize:128 : runtime =   10423496 usecs, bandwidth 20271 MB in 10.4235 sec = 1944.80 MB/s
+done all: Pass
+data_num:37 parity_num:5 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3520 5
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:5 chunksize:128 : runtime =   10276238 usecs, bandwidth 18137 MB in 10.2762 sec = 1765.02 MB/s
+done all: Pass
+data_num:37 parity_num:6 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3520 6
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:6 chunksize:128 : runtime =   10430181 usecs, bandwidth 16003 MB in 10.4302 sec = 1534.38 MB/s
+done all: Pass
+data_num:37 parity_num:7 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3520 7
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:7 chunksize:128 : runtime =   10264780 usecs, bandwidth 14936 MB in 10.2648 sec = 1455.17 MB/s
+done all: Pass
+data_num:37 parity_num:8 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3520 8
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:8 chunksize:128 : runtime =   10795273 usecs, bandwidth 14936 MB in 10.7953 sec = 1383.66 MB/s
+done all: Pass
+data_num:37 parity_num:9 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3520 9
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:9 chunksize:128 : runtime =   10591271 usecs, bandwidth 13870 MB in 10.5913 sec = 1309.57 MB/s
+done all: Pass
+data_num:37 parity_num:10 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3520 10
+chunks:8192
+helloerasure_code_encode_cold data_num:37 parity_num:10 chunksize:128 : runtime =   10851751 usecs, bandwidth 13870 MB in 10.8518 sec = 1278.14 MB/s
+done all: Pass
+data_num:38 parity_num:1 m:39 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 39x3392 1
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:1 chunksize:128 : runtime =   10067227 usecs, bandwidth 76025 MB in 10.0672 sec = 7551.83 MB/s
+done all: Pass
+data_num:38 parity_num:2 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3392 2
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:2 chunksize:128 : runtime =   10111619 usecs, bandwidth 48572 MB in 10.1116 sec = 4803.60 MB/s
+done all: Pass
+data_num:38 parity_num:3 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3392 3
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:3 chunksize:128 : runtime =   10544318 usecs, bandwidth 24286 MB in 10.5443 sec = 2303.24 MB/s
+done all: Pass
+data_num:38 parity_num:4 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3392 4
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:4 chunksize:128 : runtime =   10430740 usecs, bandwidth 20062 MB in 10.4307 sec = 1923.39 MB/s
+done all: Pass
+data_num:38 parity_num:5 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3392 5
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:5 chunksize:128 : runtime =   10134442 usecs, bandwidth 17950 MB in 10.1344 sec = 1771.24 MB/s
+done all: Pass
+data_num:38 parity_num:6 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3392 6
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:6 chunksize:128 : runtime =   10298869 usecs, bandwidth 15838 MB in 10.2989 sec = 1537.91 MB/s
+done all: Pass
+data_num:38 parity_num:7 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3392 7
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:7 chunksize:128 : runtime =   10357043 usecs, bandwidth 14782 MB in 10.3570 sec = 1427.32 MB/s
+done all: Pass
+data_num:38 parity_num:8 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3392 8
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:8 chunksize:128 : runtime =   10293336 usecs, bandwidth 13726 MB in 10.2933 sec = 1333.57 MB/s
+done all: Pass
+data_num:38 parity_num:9 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3392 9
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:9 chunksize:128 : runtime =   10816491 usecs, bandwidth 13726 MB in 10.8165 sec = 1269.07 MB/s
+done all: Pass
+data_num:38 parity_num:10 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3392 10
+chunks:8192
+helloerasure_code_encode_cold data_num:38 parity_num:10 chunksize:128 : runtime =   10319584 usecs, bandwidth 12670 MB in 10.3196 sec = 1227.86 MB/s
+done all: Pass
+data_num:39 parity_num:1 m:40 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 40x3328 1
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:1 chunksize:128 : runtime =   10074030 usecs, bandwidth 76554 MB in 10.0740 sec = 7599.19 MB/s
+done all: Pass
+data_num:39 parity_num:2 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3328 2
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:2 chunksize:128 : runtime =   10307855 usecs, bandwidth 39340 MB in 10.3079 sec = 3816.55 MB/s
+done all: Pass
+data_num:39 parity_num:3 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3328 3
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:3 chunksize:128 : runtime =   10318910 usecs, bandwidth 22328 MB in 10.3189 sec = 2163.83 MB/s
+done all: Pass
+data_num:39 parity_num:4 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3328 4
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:4 chunksize:128 : runtime =   10143445 usecs, bandwidth 18075 MB in 10.1434 sec = 1781.97 MB/s
+done all: Pass
+data_num:39 parity_num:5 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3328 5
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:5 chunksize:128 : runtime =   10246881 usecs, bandwidth 17012 MB in 10.2469 sec = 1660.22 MB/s
+done all: Pass
+data_num:39 parity_num:6 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3328 6
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:6 chunksize:128 : runtime =   10489494 usecs, bandwidth 14885 MB in 10.4895 sec = 1419.09 MB/s
+done all: Pass
+data_num:39 parity_num:7 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3328 7
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:7 chunksize:128 : runtime =   10417569 usecs, bandwidth 13822 MB in 10.4176 sec = 1326.83 MB/s
+done all: Pass
+data_num:39 parity_num:8 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3328 8
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:8 chunksize:128 : runtime =   10703676 usecs, bandwidth 13822 MB in 10.7037 sec = 1291.36 MB/s
+done all: Pass
+data_num:39 parity_num:9 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3328 9
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:9 chunksize:128 : runtime =   10626118 usecs, bandwidth 12759 MB in 10.6261 sec = 1200.73 MB/s
+done all: Pass
+data_num:39 parity_num:10 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x3328 10
+chunks:8192
+helloerasure_code_encode_cold data_num:39 parity_num:10 chunksize:128 : runtime =   10841598 usecs, bandwidth 12759 MB in 10.8416 sec = 1176.86 MB/s
+done all: Pass
+data_num:40 parity_num:1 m:41 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 41x3264 1
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:1 chunksize:128 : runtime =   10070417 usecs, bandwidth 69520 MB in 10.0704 sec = 6903.45 MB/s
+done all: Pass
+data_num:40 parity_num:2 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3264 2
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:2 chunksize:128 : runtime =   10428755 usecs, bandwidth 36364 MB in 10.4288 sec = 3486.96 MB/s
+done all: Pass
+data_num:40 parity_num:3 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3264 3
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:3 chunksize:128 : runtime =   10406561 usecs, bandwidth 23530 MB in 10.4066 sec = 2261.08 MB/s
+done all: Pass
+data_num:40 parity_num:4 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3264 4
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:4 chunksize:128 : runtime =   10469892 usecs, bandwidth 19251 MB in 10.4699 sec = 1838.78 MB/s
+done all: Pass
+data_num:40 parity_num:5 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3264 5
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:5 chunksize:128 : runtime =   10029134 usecs, bandwidth 17112 MB in 10.0291 sec = 1706.30 MB/s
+done all: Pass
+data_num:40 parity_num:6 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3264 6
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:6 chunksize:128 : runtime =   10297220 usecs, bandwidth 14973 MB in 10.2972 sec = 1454.15 MB/s
+done all: Pass
+data_num:40 parity_num:7 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3264 7
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:7 chunksize:128 : runtime =   10143532 usecs, bandwidth 13904 MB in 10.1435 sec = 1370.74 MB/s
+done all: Pass
+data_num:40 parity_num:8 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3264 8
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:8 chunksize:128 : runtime =   10734398 usecs, bandwidth 13904 MB in 10.7344 sec = 1295.29 MB/s
+done all: Pass
+data_num:40 parity_num:9 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x3264 9
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:9 chunksize:128 : runtime =   10446394 usecs, bandwidth 12834 MB in 10.4464 sec = 1228.61 MB/s
+done all: Pass
+data_num:40 parity_num:10 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x3264 10
+chunks:8192
+helloerasure_code_encode_cold data_num:40 parity_num:10 chunksize:128 : runtime =   10781609 usecs, bandwidth 12834 MB in 10.7816 sec = 1190.41 MB/s
+done all: Pass
+data_num:41 parity_num:1 m:42 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 42x3136 1
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:1 chunksize:128 : runtime =   10116154 usecs, bandwidth 72677 MB in 10.1162 sec = 7184.28 MB/s
+done all: Pass
+data_num:41 parity_num:2 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3136 2
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:2 chunksize:128 : runtime =   10189683 usecs, bandwidth 49504 MB in 10.1897 sec = 4858.33 MB/s
+done all: Pass
+data_num:41 parity_num:3 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3136 3
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:3 chunksize:128 : runtime =   10412846 usecs, bandwidth 26332 MB in 10.4128 sec = 2528.83 MB/s
+done all: Pass
+data_num:41 parity_num:4 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3136 4
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:4 chunksize:128 : runtime =   10432023 usecs, bandwidth 21065 MB in 10.4320 sec = 2019.35 MB/s
+done all: Pass
+data_num:41 parity_num:5 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3136 5
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:5 chunksize:128 : runtime =   10228437 usecs, bandwidth 18959 MB in 10.2284 sec = 1853.59 MB/s
+done all: Pass
+data_num:41 parity_num:6 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3136 6
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:6 chunksize:128 : runtime =   10602710 usecs, bandwidth 16852 MB in 10.6027 sec = 1589.47 MB/s
+done all: Pass
+data_num:41 parity_num:7 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3136 7
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:7 chunksize:128 : runtime =    9988179 usecs, bandwidth 14746 MB in 9.9882 sec = 1476.36 MB/s
+done all: Pass
+data_num:41 parity_num:8 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x3136 8
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:8 chunksize:128 : runtime =   10424945 usecs, bandwidth 14746 MB in 10.4249 sec = 1414.50 MB/s
+done all: Pass
+data_num:41 parity_num:9 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x3136 9
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:9 chunksize:128 : runtime =   10434324 usecs, bandwidth 13692 MB in 10.4343 sec = 1312.29 MB/s
+done all: Pass
+data_num:41 parity_num:10 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x3136 10
+chunks:8192
+helloerasure_code_encode_cold data_num:41 parity_num:10 chunksize:128 : runtime =   10729835 usecs, bandwidth 13692 MB in 10.7298 sec = 1276.15 MB/s
+done all: Pass
+data_num:42 parity_num:1 m:43 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 43x3072 1
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:1 chunksize:128 : runtime =   10043795 usecs, bandwidth 73987 MB in 10.0438 sec = 7366.49 MB/s
+done all: Pass
+data_num:42 parity_num:2 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3072 2
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:2 chunksize:128 : runtime =   10145804 usecs, bandwidth 46506 MB in 10.1458 sec = 4583.81 MB/s
+done all: Pass
+data_num:42 parity_num:3 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3072 3
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:3 chunksize:128 : runtime =   10322256 usecs, bandwidth 27481 MB in 10.3223 sec = 2662.31 MB/s
+done all: Pass
+data_num:42 parity_num:4 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3072 4
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:4 chunksize:128 : runtime =   10020310 usecs, bandwidth 21139 MB in 10.0203 sec = 2109.64 MB/s
+done all: Pass
+data_num:42 parity_num:5 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3072 5
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:5 chunksize:128 : runtime =   10402359 usecs, bandwidth 20082 MB in 10.4024 sec = 1930.55 MB/s
+done all: Pass
+data_num:42 parity_num:6 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3072 6
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:6 chunksize:128 : runtime =   10106521 usecs, bandwidth 16911 MB in 10.1065 sec = 1673.32 MB/s
+done all: Pass
+data_num:42 parity_num:7 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x3072 7
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:7 chunksize:128 : runtime =   10348775 usecs, bandwidth 15854 MB in 10.3488 sec = 1532.01 MB/s
+done all: Pass
+data_num:42 parity_num:8 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x3072 8
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:8 chunksize:128 : runtime =   10172664 usecs, bandwidth 14797 MB in 10.1727 sec = 1454.63 MB/s
+done all: Pass
+data_num:42 parity_num:9 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x3072 9
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:9 chunksize:128 : runtime =   10176996 usecs, bandwidth 13740 MB in 10.1770 sec = 1350.16 MB/s
+done all: Pass
+data_num:42 parity_num:10 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x3072 10
+chunks:8192
+helloerasure_code_encode_cold data_num:42 parity_num:10 chunksize:128 : runtime =   10482972 usecs, bandwidth 13740 MB in 10.4830 sec = 1310.75 MB/s
+done all: Pass
+data_num:43 parity_num:1 m:44 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 44x3008 1
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:1 chunksize:128 : runtime =   10055853 usecs, bandwidth 78409 MB in 10.0559 sec = 7797.39 MB/s
+done all: Pass
+data_num:43 parity_num:2 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x3008 2
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:2 chunksize:128 : runtime =   10148531 usecs, bandwidth 54038 MB in 10.1485 sec = 5324.80 MB/s
+done all: Pass
+data_num:43 parity_num:3 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x3008 3
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:3 chunksize:128 : runtime =   10313315 usecs, bandwidth 37085 MB in 10.3133 sec = 3595.89 MB/s
+done all: Pass
+data_num:43 parity_num:4 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x3008 4
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:4 chunksize:128 : runtime =   10164689 usecs, bandwidth 26489 MB in 10.1647 sec = 2606.05 MB/s
+done all: Pass
+data_num:43 parity_num:5 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x3008 5
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:5 chunksize:128 : runtime =   10078914 usecs, bandwidth 22251 MB in 10.0789 sec = 2207.71 MB/s
+done all: Pass
+data_num:43 parity_num:6 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x3008 6
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:6 chunksize:128 : runtime =   10428804 usecs, bandwidth 20132 MB in 10.4288 sec = 1930.44 MB/s
+done all: Pass
+data_num:43 parity_num:7 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x3008 7
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:7 chunksize:128 : runtime =   10037205 usecs, bandwidth 18012 MB in 10.0372 sec = 1794.62 MB/s
+done all: Pass
+data_num:43 parity_num:8 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x3008 8
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:8 chunksize:128 : runtime =   10393086 usecs, bandwidth 16953 MB in 10.3931 sec = 1631.22 MB/s
+done all: Pass
+data_num:43 parity_num:9 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x3008 9
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:9 chunksize:128 : runtime =   10256533 usecs, bandwidth 15893 MB in 10.2565 sec = 1549.63 MB/s
+done all: Pass
+data_num:43 parity_num:10 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x3008 10
+chunks:8192
+helloerasure_code_encode_cold data_num:43 parity_num:10 chunksize:128 : runtime =   10434895 usecs, bandwidth 15893 MB in 10.4349 sec = 1523.14 MB/s
+done all: Pass
+data_num:44 parity_num:1 m:45 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 45x2944 1
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:1 chunksize:128 : runtime =   10114290 usecs, bandwidth 72158 MB in 10.1143 sec = 7134.34 MB/s
+done all: Pass
+data_num:44 parity_num:2 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x2944 2
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:2 chunksize:128 : runtime =   10124982 usecs, bandwidth 45629 MB in 10.1250 sec = 4506.66 MB/s
+done all: Pass
+data_num:44 parity_num:3 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x2944 3
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:3 chunksize:128 : runtime =   10252034 usecs, bandwidth 27590 MB in 10.2520 sec = 2691.19 MB/s
+done all: Pass
+data_num:44 parity_num:4 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x2944 4
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:4 chunksize:128 : runtime =   10083905 usecs, bandwidth 22284 MB in 10.0839 sec = 2209.89 MB/s
+done all: Pass
+data_num:44 parity_num:5 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x2944 5
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:5 chunksize:128 : runtime =   10029010 usecs, bandwidth 20162 MB in 10.0290 sec = 2010.37 MB/s
+done all: Pass
+data_num:44 parity_num:6 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2944 6
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:6 chunksize:128 : runtime =   10507812 usecs, bandwidth 18039 MB in 10.5078 sec = 1716.79 MB/s
+done all: Pass
+data_num:44 parity_num:7 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2944 7
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:7 chunksize:128 : runtime =   10538714 usecs, bandwidth 16978 MB in 10.5387 sec = 1611.06 MB/s
+done all: Pass
+data_num:44 parity_num:8 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2944 8
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:8 chunksize:128 : runtime =    9998857 usecs, bandwidth 14856 MB in 9.9989 sec = 1485.79 MB/s
+done all: Pass
+data_num:44 parity_num:9 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2944 9
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:9 chunksize:128 : runtime =   10506139 usecs, bandwidth 14856 MB in 10.5061 sec = 1414.05 MB/s
+done all: Pass
+data_num:44 parity_num:10 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2944 10
+chunks:8192
+helloerasure_code_encode_cold data_num:44 parity_num:10 chunksize:128 : runtime =   10266107 usecs, bandwidth 13795 MB in 10.2661 sec = 1343.75 MB/s
+done all: Pass
+data_num:45 parity_num:1 m:46 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 46x2880 1
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:1 chunksize:128 : runtime =   10069801 usecs, bandwidth 66886 MB in 10.0698 sec = 6642.24 MB/s
+done all: Pass
+data_num:45 parity_num:2 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x2880 2
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:2 chunksize:128 : runtime =   10222431 usecs, bandwidth 44590 MB in 10.2224 sec = 4362.04 MB/s
+done all: Pass
+data_num:45 parity_num:3 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x2880 3
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:3 chunksize:128 : runtime =   10192427 usecs, bandwidth 27603 MB in 10.1924 sec = 2708.26 MB/s
+done all: Pass
+data_num:45 parity_num:4 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x2880 4
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:4 chunksize:128 : runtime =   10042499 usecs, bandwidth 22295 MB in 10.0425 sec = 2220.10 MB/s
+done all: Pass
+data_num:45 parity_num:5 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2880 5
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:5 chunksize:128 : runtime =   10053814 usecs, bandwidth 20171 MB in 10.0538 sec = 2006.40 MB/s
+done all: Pass
+data_num:45 parity_num:6 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2880 6
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:6 chunksize:128 : runtime =   10546584 usecs, bandwidth 18048 MB in 10.5466 sec = 1711.32 MB/s
+done all: Pass
+data_num:45 parity_num:7 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2880 7
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:7 chunksize:128 : runtime =   10033849 usecs, bandwidth 15925 MB in 10.0338 sec = 1587.15 MB/s
+done all: Pass
+data_num:45 parity_num:8 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2880 8
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:8 chunksize:128 : runtime =   10561820 usecs, bandwidth 15925 MB in 10.5618 sec = 1507.81 MB/s
+done all: Pass
+data_num:45 parity_num:9 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2880 9
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:9 chunksize:128 : runtime =   10449658 usecs, bandwidth 14863 MB in 10.4497 sec = 1422.40 MB/s
+done all: Pass
+data_num:45 parity_num:10 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2880 10
+chunks:8192
+helloerasure_code_encode_cold data_num:45 parity_num:10 chunksize:128 : runtime =   10196230 usecs, bandwidth 13801 MB in 10.1962 sec = 1353.63 MB/s
+done all: Pass
+data_num:46 parity_num:1 m:47 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 47x2816 1
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:1 chunksize:128 : runtime =   10149052 usecs, bandwidth 68975 MB in 10.1491 sec = 6796.23 MB/s
+done all: Pass
+data_num:46 parity_num:2 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x2816 2
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:2 chunksize:128 : runtime =   10331114 usecs, bandwidth 45629 MB in 10.3311 sec = 4416.74 MB/s
+done all: Pass
+data_num:46 parity_num:3 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x2816 3
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:3 chunksize:128 : runtime =   10401036 usecs, bandwidth 28651 MB in 10.4010 sec = 2754.66 MB/s
+done all: Pass
+data_num:46 parity_num:4 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2816 4
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:4 chunksize:128 : runtime =   10356028 usecs, bandwidth 22284 MB in 10.3560 sec = 2151.82 MB/s
+done all: Pass
+data_num:46 parity_num:5 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2816 5
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:5 chunksize:128 : runtime =    9966081 usecs, bandwidth 19100 MB in 9.9661 sec = 1916.59 MB/s
+done all: Pass
+data_num:46 parity_num:6 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2816 6
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:6 chunksize:128 : runtime =   10196902 usecs, bandwidth 16978 MB in 10.1969 sec = 1665.07 MB/s
+done all: Pass
+data_num:46 parity_num:7 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2816 7
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:7 chunksize:128 : runtime =   10382480 usecs, bandwidth 15917 MB in 10.3825 sec = 1533.10 MB/s
+done all: Pass
+data_num:46 parity_num:8 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2816 8
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:8 chunksize:128 : runtime =   10160189 usecs, bandwidth 14856 MB in 10.1602 sec = 1462.20 MB/s
+done all: Pass
+data_num:46 parity_num:9 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2816 9
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:9 chunksize:128 : runtime =   10010688 usecs, bandwidth 13795 MB in 10.0107 sec = 1378.03 MB/s
+done all: Pass
+data_num:46 parity_num:10 m:56 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 56x2816 10
+chunks:8192
+helloerasure_code_encode_cold data_num:46 parity_num:10 chunksize:128 : runtime =   10546129 usecs, bandwidth 13795 MB in 10.5461 sec = 1308.07 MB/s
+done all: Pass
+data_num:47 parity_num:1 m:48 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 48x2752 1
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:1 chunksize:128 : runtime =   10084210 usecs, bandwidth 64634 MB in 10.0842 sec = 6409.50 MB/s
+done all: Pass
+data_num:47 parity_num:2 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x2752 2
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:2 chunksize:128 : runtime =   10246494 usecs, bandwidth 44502 MB in 10.2465 sec = 4343.20 MB/s
+done all: Pass
+data_num:47 parity_num:3 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2752 3
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:3 chunksize:128 : runtime =   10186632 usecs, bandwidth 28608 MB in 10.1866 sec = 2808.47 MB/s
+done all: Pass
+data_num:47 parity_num:4 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2752 4
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:4 chunksize:128 : runtime =   10264963 usecs, bandwidth 23310 MB in 10.2650 sec = 2270.92 MB/s
+done all: Pass
+data_num:47 parity_num:5 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2752 5
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:5 chunksize:128 : runtime =   10000073 usecs, bandwidth 20132 MB in 10.0001 sec = 2013.20 MB/s
+done all: Pass
+data_num:47 parity_num:6 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2752 6
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:6 chunksize:128 : runtime =   10016500 usecs, bandwidth 16953 MB in 10.0165 sec = 1692.54 MB/s
+done all: Pass
+data_num:47 parity_num:7 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2752 7
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:7 chunksize:128 : runtime =   10647184 usecs, bandwidth 16953 MB in 10.6472 sec = 1592.29 MB/s
+done all: Pass
+data_num:47 parity_num:8 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2752 8
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:8 chunksize:128 : runtime =   10352629 usecs, bandwidth 15893 MB in 10.3526 sec = 1535.24 MB/s
+done all: Pass
+data_num:47 parity_num:9 m:56 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 56x2752 9
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:9 chunksize:128 : runtime =   10257249 usecs, bandwidth 14834 MB in 10.2572 sec = 1446.22 MB/s
+done all: Pass
+data_num:47 parity_num:10 m:57 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 57x2752 10
+chunks:8192
+helloerasure_code_encode_cold data_num:47 parity_num:10 chunksize:128 : runtime =   10734969 usecs, bandwidth 14834 MB in 10.7350 sec = 1381.86 MB/s
+done all: Pass
+data_num:48 parity_num:1 m:49 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 49x2688 1
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:1 chunksize:128 : runtime =   10161076 usecs, bandwidth 67645 MB in 10.1611 sec = 6657.34 MB/s
+done all: Pass
+data_num:48 parity_num:2 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2688 2
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:2 chunksize:128 : runtime =   10136929 usecs, bandwidth 45449 MB in 10.1369 sec = 4483.55 MB/s
+done all: Pass
+data_num:48 parity_num:3 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2688 3
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:3 chunksize:128 : runtime =   10364528 usecs, bandwidth 29595 MB in 10.3645 sec = 2855.41 MB/s
+done all: Pass
+data_num:48 parity_num:4 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2688 4
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:4 chunksize:128 : runtime =    9976592 usecs, bandwidth 22196 MB in 9.9766 sec = 2224.83 MB/s
+done all: Pass
+data_num:48 parity_num:5 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2688 5
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:5 chunksize:128 : runtime =   10140778 usecs, bandwidth 20082 MB in 10.1408 sec = 1980.35 MB/s
+done all: Pass
+data_num:48 parity_num:6 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2688 6
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:6 chunksize:128 : runtime =   10507983 usecs, bandwidth 17968 MB in 10.5080 sec = 1709.98 MB/s
+done all: Pass
+data_num:48 parity_num:7 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2688 7
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:7 chunksize:128 : runtime =   10624067 usecs, bandwidth 16911 MB in 10.6241 sec = 1591.80 MB/s
+done all: Pass
+data_num:48 parity_num:8 m:56 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 56x2688 8
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:8 chunksize:128 : runtime =   10488236 usecs, bandwidth 15854 MB in 10.4882 sec = 1511.64 MB/s
+done all: Pass
+data_num:48 parity_num:9 m:57 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 57x2688 9
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:9 chunksize:128 : runtime =   10356419 usecs, bandwidth 14797 MB in 10.3564 sec = 1428.82 MB/s
+done all: Pass
+data_num:48 parity_num:10 m:58 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 58x2688 10
+chunks:8192
+helloerasure_code_encode_cold data_num:48 parity_num:10 chunksize:128 : runtime =   10812970 usecs, bandwidth 14797 MB in 10.8130 sec = 1368.50 MB/s
+done all: Pass
+data_num:49 parity_num:1 m:50 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 50x2624 1
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:1 chunksize:128 : runtime =   10061034 usecs, bandwidth 66357 MB in 10.0610 sec = 6595.50 MB/s
+done all: Pass
+data_num:49 parity_num:2 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2624 2
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:2 chunksize:128 : runtime =   10263553 usecs, bandwidth 50558 MB in 10.2636 sec = 4925.99 MB/s
+done all: Pass
+data_num:49 parity_num:3 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2624 3
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:3 chunksize:128 : runtime =   10235458 usecs, bandwidth 32652 MB in 10.2355 sec = 3190.10 MB/s
+done all: Pass
+data_num:49 parity_num:4 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2624 4
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:4 chunksize:128 : runtime =   10200730 usecs, bandwidth 25279 MB in 10.2007 sec = 2478.16 MB/s
+done all: Pass
+data_num:49 parity_num:5 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2624 5
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:5 chunksize:128 : runtime =   10018110 usecs, bandwidth 22119 MB in 10.0181 sec = 2207.92 MB/s
+done all: Pass
+data_num:49 parity_num:6 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2624 6
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:6 chunksize:128 : runtime =   10101514 usecs, bandwidth 18959 MB in 10.1015 sec = 1876.88 MB/s
+done all: Pass
+data_num:49 parity_num:7 m:56 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 56x2624 7
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:7 chunksize:128 : runtime =   10318591 usecs, bandwidth 17906 MB in 10.3186 sec = 1735.32 MB/s
+done all: Pass
+data_num:49 parity_num:8 m:57 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 57x2624 8
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:8 chunksize:128 : runtime =   10208559 usecs, bandwidth 16852 MB in 10.2086 sec = 1650.84 MB/s
+done all: Pass
+data_num:49 parity_num:9 m:58 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 58x2624 9
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:9 chunksize:128 : runtime =   10195543 usecs, bandwidth 15799 MB in 10.1955 sec = 1549.64 MB/s
+done all: Pass
+data_num:49 parity_num:10 m:59 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 59x2624 10
+chunks:8192
+helloerasure_code_encode_cold data_num:49 parity_num:10 chunksize:128 : runtime =   10507185 usecs, bandwidth 15799 MB in 10.5072 sec = 1503.68 MB/s
+done all: Pass
+data_num:50 parity_num:1 m:51 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 51x2560 1
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:1 chunksize:128 : runtime =   10091913 usecs, bandwidth 68157 MB in 10.0919 sec = 6753.67 MB/s
+done all: Pass
+data_num:50 parity_num:2 m:52 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 52x2560 2
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:2 chunksize:128 : runtime =   10241036 usecs, bandwidth 48234 MB in 10.2410 sec = 4709.92 MB/s
+done all: Pass
+data_num:50 parity_num:3 m:53 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 53x2560 3
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:3 chunksize:128 : runtime =   10168342 usecs, bandwidth 31457 MB in 10.1683 sec = 3093.65 MB/s
+done all: Pass
+data_num:50 parity_num:4 m:54 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 54x2560 4
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:4 chunksize:128 : runtime =   10521274 usecs, bandwidth 24117 MB in 10.5213 sec = 2292.24 MB/s
+done all: Pass
+data_num:50 parity_num:5 m:55 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 55x2560 5
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:5 chunksize:128 : runtime =   10219279 usecs, bandwidth 20971 MB in 10.2193 sec = 2052.15 MB/s
+done all: Pass
+data_num:50 parity_num:6 m:56 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 56x2560 6
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:6 chunksize:128 : runtime =   10244288 usecs, bandwidth 17825 MB in 10.2443 sec = 1740.07 MB/s
+done all: Pass
+data_num:50 parity_num:7 m:57 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 57x2560 7
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:7 chunksize:128 : runtime =   10363690 usecs, bandwidth 16777 MB in 10.3637 sec = 1618.85 MB/s
+done all: Pass
+data_num:50 parity_num:8 m:58 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 58x2560 8
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:8 chunksize:128 : runtime =   10286243 usecs, bandwidth 15728 MB in 10.2862 sec = 1529.09 MB/s
+done all: Pass
+data_num:50 parity_num:9 m:59 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 59x2560 9
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:9 chunksize:128 : runtime =   10064845 usecs, bandwidth 14680 MB in 10.0648 sec = 1458.55 MB/s
+done all: Pass
+data_num:50 parity_num:10 m:60 chunksize:128 chunks:8192
+erasure_code_perf_erasure_code_perf: 60x2560 10
+chunks:8192
+helloerasure_code_encode_cold data_num:50 parity_num:10 chunksize:128 : runtime =   10370869 usecs, bandwidth 14680 MB in 10.3709 sec = 1415.51 MB/s
+done all: Pass
