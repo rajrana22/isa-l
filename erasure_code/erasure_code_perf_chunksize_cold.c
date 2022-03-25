@@ -66,9 +66,15 @@ typedef unsigned char u8;
 void ec_encode_data_chunks(int m, int k, u8 ** g_tbls, u8 *** buffs, int chunksize, int chunks)
 {
 	int x;
+	struct timespec start, stop;
+	clock_gettime( CLOCK_REALTIME, &start);
 	for (x = 0; x < chunks; x++) {
 		ec_encode_data(TEST_LEN(chunksize,k), k, m - k, g_tbls[x], buffs[x], &buffs[x][k]);
 	}
+	clock_gettime( CLOCK_REALTIME, &stop);
+	double cost = (stop.tv_sec - start.tv_sec)+ (double)( stop.tv_nsec - start.tv_nsec )
+               / (double)BILLION;
+	printf( "%lf\n", cost);
 }
 
 void ec_encode_perf(int m, int k, u8 ** a, u8 ** g_tbls, u8 *** buffs, struct perf *start, int chunksize, int chunks)
@@ -76,6 +82,7 @@ void ec_encode_perf(int m, int k, u8 ** a, u8 ** g_tbls, u8 *** buffs, struct pe
 	int x;
 	for (x = 0; x < chunks; x++)
 		ec_init_tables(k, m - k, &a[x][k * k], g_tbls[x]);
+	printf("TEST_LEN(chunksize,k):%d\n", TEST_LEN(chunksize,k));
 	BENCHMARK(start, BENCHMARK_TIME,
 		ec_encode_data_chunks(m, k, g_tbls, buffs, chunksize, chunks))
 }
@@ -217,6 +224,7 @@ int main(int argc, char *argv[])
 	ec_encode_perf(m, k, a, g_tbls, buffs, &start, chunksize, chunks);
 //	printf("erasure_code_encode" TEST_TYPE_STR ": ");
 	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
+	printf("datasize:%d\n", TEST_LEN(chunksize,k) * chunks * (k));
 	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * chunks * (k));
 
 /*	// Start decode test
