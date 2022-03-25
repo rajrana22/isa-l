@@ -155,11 +155,6 @@ int main(int argc, char *argv[])
 
 	printf("chunks:%d\n", chunks);
 
-	u8*** temp_buffs = (u8***) malloc(chunks * sizeof(u8**));
-	for (x = 0; x < chunks; x++)
-		temp_buffs[x] = (u8**) malloc(TEST_SOURCES * sizeof(u8*));
-	printf("hello");
-
 	u8*** buffs = (u8***) malloc(chunks * sizeof(u8**));
 	for (x = 0; x < chunks; x++)
 		buffs[x] = (u8**) malloc(TEST_SOURCES * sizeof(u8*));
@@ -194,17 +189,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	for (x = 0; x < chunks; x++) {
-		for (i = 0; i < (m - k); i++) {
-			// @meng: this is for each parity disk. I guess it's for later calculation use
-			if (posix_memalign(&buf, 64, TEST_LEN(chunksize, k))) {
-				printf("alloc error: Fail\n");
-				return -1;
-			}
-			temp_buffs[x][i] = buf;
-		}
-	}
-
 	// Make random data
 	// generate a random u8
 	for (x = 0; x < chunks; x++)
@@ -231,22 +215,14 @@ int main(int argc, char *argv[])
 		return check;
 	}
 
-	for (i = 0; i < nerrs; i++) {
-		if (0 != memcmp(temp_buffs[i], buffs[src_err_list[i]], TEST_LEN(chunksize,k))) {
-			printf("Fail error recovery (%d, %d, %d) - \n", m, k, nerrs);
-			// return -1;
-		}
-	}
 
 //	printf("erasure_code_decode" TEST_TYPE_STR ": ");
 	printf("erasure_code_decode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
 	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * (k));
 */
 	for (x = 0; x < chunks; x++) {
-		free(temp_buffs[x]);
 		free(buffs[x]);
 	}
-	free(temp_buffs);
 	free(buffs);
 	free(a);
 	free(g_tbls);
