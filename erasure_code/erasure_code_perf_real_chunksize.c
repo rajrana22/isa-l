@@ -47,9 +47,9 @@
 #  define TEST_SOURCES 150
 #  define GT_L3_CACHE  1024*1024*1024	/* some number > last level cache */
 //#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
-#  define TEST_NUM(chunksize) ((GT_L3_CACHE / (chunksize*1024)))
+#  define TEST_NUM(chunksize, k) ((GT_L3_CACHE / (chunksize*1024*k)))
 //#  define TEST_NUM(chunksize) 1
-#  define TEST_LEN(chunksize, k)  ((chunksize*1024 / k) & ~(64-1))        // k is data units #
+#  define TEST_LEN(chunksize, k)  (chunksize*1024)        // k is data units #
 #  define TEST_TYPE_STR "_cold"
 # else
 #  define TEST_TYPE_STR "_cus"
@@ -63,28 +63,20 @@
 
 typedef unsigned char u8;
 
-void ec_encode_data_chunks(int m, int k, u8 * g_tbls, u8 *** buffs, int chunksize, int chunks)
+void ec_encode_data_stripes(int m, int k, u8 * g_tbls, u8 *** buffs, int len, int stripes)
 {
 	int x;
-	struct timespec start, stop;
-	clock_gettime( CLOCK_REALTIME, &start);
-	for (x = 0; x < chunks; x++) {
-		ec_encode_data(TEST_LEN(chunksize,k), k, m - k, g_tbls, buffs[x], &buffs[x][k]);
+	for (x = 0; x < stripes; x++) {
+		ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
 	}
-	clock_gettime( CLOCK_REALTIME, &stop);
-	double cost = (stop.tv_sec - start.tv_sec)+ (double)( stop.tv_nsec - start.tv_nsec )
-               / (double)BILLION;
-	printf( "%lf\n", cost);
 }
 
-void ec_encode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 *** buffs, struct perf *start, int chunksize, int chunks)
+void ec_encode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 *** buffs, struct perf *start, int len, int stripes)
 {
-	int x;
-	for (x = 0; x < chunks; x++)
-		ec_init_tables(k, m - k, &a[k * k], g_tbls);
-	printf("TEST_LEN(chunksize,k):%d\n", TEST_LEN(chunksize,k));
+	printf("init ec table..\n");
+	ec_init_tables(k, m - k, &a[k * k], g_tbls);
 	BENCHMARK(start, BENCHMARK_TIME,
-		ec_encode_data_chunks(m, k, g_tbls, buffs, chunksize, chunks))
+		ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes))
 }
 
 
@@ -122,15 +114,14 @@ int ec_decode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_e
 
 int main(int argc, char *argv[])
 {
-	int i, j, m, k, nerrs, x;
-	int chunksize, chunks;
-	void *buf;
+	int i, j, m, k, p, x;
+	int chunksize, stripes, stripesize, len, datasize;
 
 	// Pick test parameters
 	// @meng: this means 10+4 EC
 	m = 14;
 	k = 10;
-	nerrs = 4;
+	p = 4;
 //	const u8 err_list[] = { 2, 4, 5, 7 };
 //	const u8 err_list[] = { 1, 2, 3, 4 };
 
@@ -138,13 +129,17 @@ int main(int argc, char *argv[])
 		printf("./erasure_code_perf_erasure_code_perf data_num parity_num chunksize\n");
 
 	k = atoi(argv[1]);
-	nerrs = atoi(argv[2]);
-	chunksize = atoi(argv[3]);
-	chunks = TEST_NUM(chunksize);
-	m = k + nerrs;
-	printf("data_num:%d parity_num:%d m:%d chunksize:%d chunks:%d\n", k, nerrs, m, chunksize, chunks);
+	p = atoi(argv[2]);
+	chunksize = atoi(argv[3]);	// in kb
+	len = chunksize * 1024;
+	stripesize = len * k;
+	datasize = 1024 * 1024 * 1024; //1gib
+	stripes = datasize / stripesize;
+	m = k + p;
+	printf("data_num:%d parity_num:%d m:%d chunksize:%d len:%d stripesize:%d stripes:%d\n",
+		k, p, m, chunksize, len, stripesize, stripes);
 
-	printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, TEST_LEN(chunksize,k), nerrs);
+	printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, len, p);
 
 /*	u8 *temp_buffs[TEST_SOURCES], *buffs[TEST_SOURCES];
 	u8 a[MMAX * KMAX];
@@ -153,25 +148,16 @@ int main(int argc, char *argv[])
 */
 	struct perf start;
 
-	printf("chunks:%d\n", chunks);
+	printf("stripes:%d\n", stripes);
 
-	u8*** temp_buffs = (u8***) malloc(chunks * sizeof(u8**));
-	for (x = 0; x < chunks; x++)
-		temp_buffs[x] = (u8**) malloc(TEST_SOURCES * sizeof(u8*));
-	printf("hello");
+	u8*** buffs = (u8***) malloc(stripes * sizeof(u8**));
+	for (x = 0; x < stripes; x++)
+		buffs[x] = (u8**) malloc(m * sizeof(u8*));
 
-	u8*** buffs = (u8***) malloc(chunks * sizeof(u8**));
-	for (x = 0; x < chunks; x++)
-		buffs[x] = (u8**) malloc(TEST_SOURCES * sizeof(u8*));
+	u8* a = (u8*) malloc(m * k * sizeof(u8));
 
-	u8* a = (u8*) malloc(MMAX * KMAX * sizeof(u8));
+	u8* g_tbls = (u8*) malloc(k * p * 32 * sizeof(u8));
 
-	u8* g_tbls = (u8*) malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
-
-	if (m > MMAX || k > KMAX || nerrs > (m - k)) {
-		printf(" Input test parameter error\n");
-		return -1;
-	}
 
 //	memcpy(src_err_list, err_list, nerrs);
 /*		for (i = 0; i < nerrs; i++)
@@ -181,46 +167,36 @@ int main(int argc, char *argv[])
 			src_in_err[src_err_list[i]] = 1;
 */
 
-
+	printf("allocating space for buff...\n");
 	// Allocate the arrays
-	for (x = 0; x < chunks; x++) {
+	for (x = 0; x < stripes; x++) {
 		for (i = 0; i < m; i++) {
 			// @meng: allocate TEST_LEN(chunksize,k) data for each disk
-			if (posix_memalign(&buf, 64, TEST_LEN(chunksize, k))) {
+			if (NULL == (buffs[x][i] = (u8*) malloc(len * sizeof(u8)))) {
 				printf("alloc error: Fail\n");
 				return -1;
 			}
-			buffs[x][i] = buf;
 		}
 	}
 
-	for (x = 0; x < chunks; x++) {
-		for (i = 0; i < (m - k); i++) {
-			// @meng: this is for each parity disk. I guess it's for later calculation use
-			if (posix_memalign(&buf, 64, TEST_LEN(chunksize, k))) {
-				printf("alloc error: Fail\n");
-				return -1;
-			}
-			temp_buffs[x][i] = buf;
-		}
-	}
+	printf("generating random data...\n");
 
 	// Make random data
 	// generate a random u8
-	for (x = 0; x < chunks; x++)
+	for (x = 0; x < stripes; x++)
 		for (i = 0; i < k; i++)
-			for (j = 0; j < TEST_LEN(chunksize,k); j++)
+			for (j = 0; j < len; j++)
 				buffs[x][i][j] = rand();
 
-//		gf_gen_rs_matrix(a[x], m, k);
+	printf("generating cauchy matrix...\n");
 	gf_gen_cauchy1_matrix(a, m, k);
 
 	// Start encode test
-	ec_encode_perf(m, k, a, g_tbls, buffs, &start, chunksize, chunks);
+	ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes);
 //	printf("erasure_code_encode" TEST_TYPE_STR ": ");
-	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
-	printf("datasize:%d\n", TEST_LEN(chunksize,k) * chunks * (k));
-	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * chunks * (k));
+	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
+	printf("datasize:%d\n", stripes * stripesize);
+	perf_print(start, (long long)(stripes * stripesize));
 
 /*	// Start decode test
 	check = ec_decode_perf(m, k, a, g_tbls, buffs, src_in_err, src_err_list, nerrs,
@@ -242,11 +218,11 @@ int main(int argc, char *argv[])
 	printf("erasure_code_decode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, nerrs, chunksize);
 	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * (k));
 */
-	for (x = 0; x < chunks; x++) {
-		free(temp_buffs[x]);
+	for (x = 0; x < stripes; x++) {
+		for (i = 0; i < m; i++)
+			free(buffs[x][i]);
 		free(buffs[x]);
 	}
-	free(temp_buffs);
 	free(buffs);
 	free(a);
 	free(g_tbls);
