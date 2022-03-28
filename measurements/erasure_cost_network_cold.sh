@@ -1,5 +1,5 @@
 #!/bin/bash
-for n in {1..8}
+for n in {16..16}
 do
   for k in {1..8}
   do

@@ -66,16 +66,9 @@ typedef unsigned char u8;
 void ec_encode_data_stripes(int m, int k, u8 * g_tbls, u8 *** buffs, int len, int stripes, double *t)
 {
 	int x;
-	struct timespec start, stop;
-	clock_gettime( CLOCK_REALTIME, &start);
 	for (x = 0; x < stripes; x++) {
 		ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
 	}
-	clock_gettime( CLOCK_REALTIME, &stop);
-	double cost = (stop.tv_sec - start.tv_sec)+ (double)( stop.tv_nsec - start.tv_nsec )
-               / (double)BILLION;
-	(*t) += cost;
-	printf( "%lf  x:%d stripes:%d  len:%d total time:%lf\n", cost, x, stripes, len, *t);
 }
 
 void ec_encode_data_stripes_detail(int m, int k, u8 * g_tbls, u8 *** buffs, int len, int stripes)
@@ -193,7 +186,7 @@ int main(int argc, char *argv[])
 	// Allocate the arrays
 	void* buf;
 	for (x = 0; x < stripes; x++) {
-		for (i = 0; i < m; i++) {
+		for (i = k; i < m; i++) {
 			// @meng: allocate TEST_LEN(chunksize,k) data for each disk
 //			if (NULL == (buffs[x][i] = (u8*) malloc(len * sizeof(u8)))) {
 			if (posix_memalign(&buf, 64, len)) {
@@ -210,21 +203,71 @@ int main(int argc, char *argv[])
 	gf_gen_cauchy1_matrix(a, m, k);
 
 	double totaltime = 0.0;
-	int rounds = 10;
+	int rounds = 50;
+	double totaltime5 = 0.0;
+
+	FILE *textfile, *textfile2;
+	unsigned char *text, *text2;
+	long    numbytes, numbytes2;
+
+	textfile = fopen("/home/cc/1gb-1.bin", "r");
+	fseek(textfile, 0L, SEEK_END);
+	numbytes = ftell(textfile);
+	fseek(textfile, 0L, SEEK_SET);
+
+	text = (u8*)calloc(numbytes, sizeof(u8));
+	fread(text, sizeof(char), numbytes, textfile);
+	fclose(textfile);
+
+	printf("numbytes:%ld\n", numbytes);
+/*
+	textfile2 = fopen("/home/cc/1gb-2.bin", "r");
+	fseek(textfile2, 0L, SEEK_END);
+	numbytes2 = ftell(textfile2);
+	fseek(textfile2, 0L, SEEK_SET);
+
+	text2 = (u8*)calloc(numbytes2, sizeof(u8));
+	fread(text2, sizeof(char), numbytes, textfile2);
+	fclose(textfile2);
+
+	printf("numbytes:%ld\n", numbytes2);
+*/
+
+
 	for (int y = 0; y < rounds; y++){
 		printf("...new round...\n");
-		for (x = 0; x < stripes; x++)
-			for (i = 0; i < k; i++)
-				for (j = 0; j < len; j++)
-					buffs[x][i][j] = rand();
+		struct timespec starttime, stop;
+		clock_gettime( CLOCK_REALTIME, &starttime);
+		{
+			int pos = 0;
+			for (x = 0; x < stripes; x++)
+				for (i = 0; i < k; i++) {
+//					if (y % 2 == 0)
+						buffs[x][i] = &text[pos];
+//					else
+//						buffs[x][i] = &text2[pos];
+					pos += len;
+				}
+	//		printf("pos:%d\n", pos);
+		}
+
 		ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes, &totaltime);
+		clock_gettime( CLOCK_REALTIME, &stop);
+		double cost = (stop.tv_sec - starttime.tv_sec)+ (double)( stop.tv_nsec - starttime.tv_nsec )
+               		/ (double)BILLION;
+		totaltime += cost;
+		if (y < 5)
+			totaltime5 += cost;
+		printf( "%lf  stripes:%d  len:%d totaltime5:%lf total time:%lf\n", cost, stripes, len, totaltime5, totaltime);
 	}
 
 
 	double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
+	double throughput2 = ((double)(stripes * stripesize)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
 //	printf("erasure_code_encode" TEST_TYPE_STR ": ");
 	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
-	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s\n", stripes * stripesize, totaltime, throughput);
+	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
+			stripes * stripesize, totaltime, throughput, totaltime-totaltime5, throughput2);
 	perf_print(start, ((long long)(stripes * stripesize)) * 1024);
 
 /*	// Start decode test
@@ -248,7 +291,7 @@ int main(int argc, char *argv[])
 	perf_print(start, (long long)(TEST_LEN(chunksize,k)) * (k));
 */
 	for (x = 0; x < stripes; x++) {
-		for (i = 0; i < m; i++)
+		for (i = k; i < m; i++)
 			free(buffs[x][i]);
 		free(buffs[x]);
 	}
