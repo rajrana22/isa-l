@@ -120,6 +120,7 @@ perf_tests32 += erasure_code/gf_vect_mul_perf \
 		erasure_code/erasure_code_perf_chunksize \
 		erasure_code/erasure_code_perf_real_chunksize \
 		erasure_code/erasure_code_perf_mlec \
+		erasure_code/erasure_code_perf_mlec_split \
 		erasure_code/erasure_code_perf_from_file \
 		erasure_code/erasure_code_perf_chunksize_cold \
 		erasure_code/erasure_code_base_perf \
@@ -152,6 +153,7 @@ perf_tests   += erasure_code/gf_vect_mul_perf \
 		erasure_code/erasure_code_perf_chunksize \
 		erasure_code/erasure_code_perf_real_chunksize \
 		erasure_code/erasure_code_perf_mlec \
+		erasure_code/erasure_code_perf_mlec_split \
 		erasure_code/erasure_code_perf_from_file \
 		erasure_code/erasure_code_perf_chunksize_cold \
 		erasure_code/erasure_code_base_perf \
