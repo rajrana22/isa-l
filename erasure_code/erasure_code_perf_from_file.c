@@ -33,6 +33,7 @@
 #include "erasure_code.h"
 #include "test.h"
 #include <time.h>
+#include <unistd.h>
 #define BILLION  1000000000L;
 
 // #define CACHED_TEST
@@ -209,8 +210,13 @@ int main(int argc, char *argv[])
 	FILE *textfile, *textfile2;
 	unsigned char *text, *text2;
 	long    numbytes, numbytes2;
+	char fname[] = "1gb-1.bin";
 
-	textfile = fopen("/home/cc/1gb-1.bin", "r");
+	if (access(fname, F_OK) != 0) {
+		// File doesn't exist, create 1 GB file with random data.
+		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1g");
+	}
+	textfile = fopen(fname, "r");
 	fseek(textfile, 0L, SEEK_END);
 	numbytes = ftell(textfile);
 	fseek(textfile, 0L, SEEK_SET);
@@ -228,7 +234,7 @@ int main(int argc, char *argv[])
 
 	text2 = (u8*)calloc(numbytes2, sizeof(u8));
 	fread(text2, sizeof(char), numbytes, textfile2);
-	fclose(textfile2);
+2);
 
 	printf("numbytes:%ld\n", numbytes2);
 */
