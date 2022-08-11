@@ -82,8 +82,11 @@ void ec_encode_data_stripes(int local_groups, int m_l, int m_n, int k_l, int k_n
 	int x, y;
 	for (x = 0; x < stripes_n; x++) {
 		ec_encode_data(len, k_n, m_n - k_n, g_tbls2, net_buffs[x], &net_buffs[x][k_n]);
+		printf("DEBUG: Global is okay\n");
 		for (y = 0; y < local_groups; y++)
+			printf("DEBUG: x, y: [%d][%d]\n", x, y);
 			ec_encode_data(len, k_l, m_l - k_l, g_tbls, loc_buffs[x][y], &loc_buffs[x][y][k_l]);
+			printf("DEBUG: Local is okay\n");
 	}
 }
 
@@ -91,7 +94,7 @@ void ec_encode_perf(int local_groups, int m_l, int m_n, int k_l, int k_n, u8 * a
 			 u8 * g_tbls, u8 * g_tbls2, u8 *** net_buffs, u8 **** loc_buffs, struct perf *start, 
 			int len, int stripes_l, int stripes_n, double* t)
 {
-	printf("init ec table..\n");
+	// printf("init ec table..\n");
 	ec_init_tables(k_l, m_l - k_l, &a[k_l * k_l], g_tbls);
 	ec_init_tables(k_n, m_n - k_n, &a2[k_n * k_n], g_tbls2);
 	BENCHMARK(start, 0,
@@ -189,8 +192,9 @@ int main(int argc, char *argv[])
 	p_l = local_parity;
 	m_l = k_l + p_l;
 
-	datasize = 1 * 1024 * 1024 * 1024; // 1 GB in KB
 	len = chunksize * 1024;    // in bytes
+	// datasize = 1 * chunksize * k_n;
+	datasize = 1 * 1024 * 1024; // 1 GB in KB
 
 	/* Stripe size and number of stripes_l (in KB). */
 
@@ -205,7 +209,10 @@ int main(int argc, char *argv[])
 		stripes_l = datasize / stripesize_l;
 	}
 
-	printf("\nChunksize in kilobytes:%dKB\nChunksize in bytes:%dB\n\n", chunksize, len);
+	printf("\nChunksize in kilobytes:%dKB\nChunksize in bytes:%dB\n", chunksize, len);
+
+	printf("Data size: %i B = %i KB = %0.2f MB = %0.2f GB\n\n", datasize * 1024, datasize,
+		(float)datasize / 1024, (float)datasize / (1024 * 1024));
 
 	printf("-----GLOBAL LAYER-----\n");
 	printf("Data Shards:%d\nParity Shards:%d\nTotal Shards:%d\nStripesize:%dKB\nNumber of stripes:%d\n\n",
@@ -235,6 +242,11 @@ int main(int argc, char *argv[])
 		for (y = 0; y < local_groups; y++)
 			loc_buffs[x][y] = (u8**) malloc(m_l * sizeof(u8*));
 	}
+
+	printf("Size of network buffer: %d stripes x %d chunks x %zu bytes\n",
+		stripes_n, m_n, sizeof(u8*));
+	printf("Size of local buffer: %d stripes x %d x groups %d chunks x %zu bytes\n",
+		stripes_n, local_groups, m_l, sizeof(u8*));
 
 	u8* a2 = (u8*) malloc(MMAX * KMAX * sizeof(u8));
 	u8* a = (u8*) malloc(MMAX * KMAX * sizeof(u8));
@@ -307,19 +319,23 @@ int main(int argc, char *argv[])
 	/*                                  Encoding                                  */
 	/* -------------------------------------------------------------------------- */
 
+	printf("Encoding...\n");
+
 	for (z = 0; z < rounds; z++){
-		printf("...New Round...\n");
+		// printf("...New Round...\n");
 		struct timespec starttime, stop;
 		clock_gettime( CLOCK_REALTIME, &starttime);
 		{
 			int pos = 0;
+			// printf("stripes_n: %d\n", stripes_n);
+			// printf("k_n: %d\n", k_n);
 			for (x = 0; x < stripes_n; x++) {
 				for (i = 0; i < k_n; i++) {
 					net_buffs[x][i] = &text[pos];
 					pos += len;
 				}
 			}
-			printf("pos:%d\n", pos);
+			// printf("pos:%d\n", pos);
 
 			for (x = 0; x < stripes_n; x++) {
 				for (y = 0; y < local_groups; y++) {
@@ -340,7 +356,8 @@ int main(int argc, char *argv[])
 		totaltime += cost;
 		if (z < 5)
 			totaltime5 += cost;
-		printf( "%lf  stripes:%d  len:%d totaltime5:%lf total time:%lf\n", cost, stripes_n, len, totaltime5, totaltime);
+		// printf( "%lf  stripes:%d  len:%d totaltime5:%lf total time:%lf\n", cost, stripes_n, len, totaltime5, totaltime);
+		printf("Time Elapsed: %lf\n", totaltime);
 	}
 
 	/* -------------------------------------------------------------------------- */
@@ -349,7 +366,6 @@ int main(int argc, char *argv[])
 
 	double throughput = ((double)(stripes_n * stripesize_n)) * rounds * 1024 / 1000000 / totaltime;
 	double throughput2 = ((double)(stripes_n * stripesize_n)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
-	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k_l, p_l, chunksize);
 	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime5:%lf  throughput2:%lfMB/s\n",
 			stripes_n * stripesize_n, totaltime, throughput, totaltime-totaltime5, throughput2);
 	perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
