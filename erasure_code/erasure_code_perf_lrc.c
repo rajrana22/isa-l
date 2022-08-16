@@ -82,11 +82,12 @@ void ec_encode_data_stripes(int local_groups, int m_l, int m_n, int k_l, int k_n
 	int x, y;
 	for (x = 0; x < stripes_n; x++) {
 		ec_encode_data(len, k_n, m_n - k_n, g_tbls2, net_buffs[x], &net_buffs[x][k_n]);
-		printf("DEBUG: Global is okay\n");
-		for (y = 0; y < local_groups; y++)
-			printf("DEBUG: x, y: [%d][%d]\n", x, y);
+		// printf("DEBUG: Global is okay\n");
+		for (y = 0; y < local_groups; y++) {
+			// printf("DEBUG: x, y: [%d][%d]\n", x, y);
 			ec_encode_data(len, k_l, m_l - k_l, g_tbls, loc_buffs[x][y], &loc_buffs[x][y][k_l]);
-			printf("DEBUG: Local is okay\n");
+			// printf("DEBUG: Local is okay\n");
+		}
 	}
 }
 
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
 	/* -------------------------------------------------------------------------- */
 
 	if (argc < 4)
-		printf("USAGE: ./erasure_code_perf_lrc k_l l r p_l chunksize\n");
+		printf("USAGE: ./erasure_code_perf_lrc k l r p chunksize\n");
 
 	global_data = atoi(argv[1]);
 	local_groups = atoi(argv[2]);
@@ -302,7 +303,7 @@ int main(int argc, char *argv[])
 
 	if (access(fname, F_OK) != 0) {
 		// File doesn't exist, create 1 GB file with random data.
-		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1g");
+		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1G");
 	}
 	textfile = fopen(fname, "r");
 	fseek(textfile, 0L, SEEK_END);
@@ -368,7 +369,7 @@ int main(int argc, char *argv[])
 	double throughput2 = ((double)(stripes_n * stripesize_n)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
 	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime5:%lf  throughput2:%lfMB/s\n",
 			stripes_n * stripesize_n, totaltime, throughput, totaltime-totaltime5, throughput2);
-	perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
+	// perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
 
 	/* -------------------------------------------------------------------------- */
 	/*                             Memory Deallocation                            */
