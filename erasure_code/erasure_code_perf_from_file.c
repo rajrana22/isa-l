@@ -145,6 +145,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 4)
 		printf("./erasure_code_perf_erasure_code_perf data_num parity_num chunksize\n");
+		exit(EXIT_FAILURE);
 
 	k = atoi(argv[1]);
 	p = atoi(argv[2]);

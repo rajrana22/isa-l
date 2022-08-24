@@ -153,8 +153,9 @@ int main(int argc, char *argv[])
 	k_l = 10;
 	p_l = 4;
 
-	if (argc < 4)
+	if (argc < 6)
 		printf("USAGE: ./erasure_code_perf_mlec net_data net_parity loc_data loc_parity chunksize_l\n");
+		exit(EXIT_FAILURE);
 
 	k_n = atoi(argv[1]);
 	p_n = atoi(argv[2]);
