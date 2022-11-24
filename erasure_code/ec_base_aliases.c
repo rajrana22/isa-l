@@ -28,34 +28,35 @@
 **********************************************************************/
 
 #include "erasure_code.h"
+#include <stdio.h>
 
 void gf_vect_dot_prod(int len, int vlen, unsigned char *v,
-		      unsigned char **src, unsigned char *dest)
+                      unsigned char **src, unsigned char *dest)
 {
-	gf_vect_dot_prod_base(len, vlen, v, src, dest);
+    gf_vect_dot_prod_base(len, vlen, v, src, dest);
 }
 
 void gf_vect_mad(int len, int vec, int vec_i,
-		 unsigned char *v, unsigned char *src, unsigned char *dest)
+                 unsigned char *v, unsigned char *src, unsigned char *dest)
 {
-	gf_vect_mad_base(len, vec, vec_i, v, src, dest);
-
+    gf_vect_mad_base(len, vec, vec_i, v, src, dest);
 }
 
 void ec_encode_data(int len, int srcs, int dests, unsigned char *v,
-		    unsigned char **src, unsigned char **dest)
+                    unsigned char **src, unsigned char **dest)
 {
-	ec_encode_data_base(len, srcs, dests, v, src, dest);
+    printf("DEBUG: ec_base_aliases\n");
+    ec_encode_data_base(len, srcs, dests, v, src, dest);
 }
 
 void ec_encode_data_update(int len, int k, int rows, int vec_i, unsigned char *v,
-			   unsigned char *data, unsigned char **dest)
+                           unsigned char *data, unsigned char **dest)
 {
-	ec_encode_data_update_base(len, k, rows, vec_i, v, data, dest);
+    ec_encode_data_update_base(len, k, rows, vec_i, v, data, dest);
 }
 
 int gf_vect_mul(int len, unsigned char *a, void *src, void *dest)
 {
-	gf_vect_mul_base(len, a, (unsigned char *)src, (unsigned char *)dest);
-	return 0;
+    gf_vect_mul_base(len, a, (unsigned char *)src, (unsigned char *)dest);
+    return 0;
 }

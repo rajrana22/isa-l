@@ -29,32 +29,32 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>		// for memset, memcmp
+#include <string.h> // for memset, memcmp
 #include "erasure_code.h"
 #include "test.h"
 #include <time.h>
 #include <unistd.h>
-#define BILLION  1000000000L;
+#define BILLION 1000000000L;
 
 // #define CACHED_TEST
 #ifdef CACHED_TEST
 // Cached test, loop many times over small dataset
-# define TEST_SOURCES 40
-# define TEST_LEN(m)  ((128*1024 / m) & ~(64-1))
-# define TEST_TYPE_STR "_warm"
+#define TEST_SOURCES 40
+#define TEST_LEN(m) ((128 * 1024 / m) & ~(64 - 1))
+#define TEST_TYPE_STR "_warm"
 #else
-# ifndef TEST_CUSTOM
+#ifndef TEST_CUSTOM
 // Uncached test.  Pull from large mem base.
-#  define TEST_SOURCES 150
-#  define GT_L3_CACHE  1024*1024*1024	/* some number > last level cache */
+#define TEST_SOURCES 150
+#define GT_L3_CACHE 1024 * 1024 * 1024 /* some number > last level cache */
 //#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
-#  define TEST_NUM(chunksize, k) ((GT_L3_CACHE / (chunksize*1024*k)))
+#define TEST_NUM(chunksize, k) ((GT_L3_CACHE / (chunksize * 1024 * k)))
 //#  define TEST_NUM(chunksize) 1
-#  define TEST_LEN(chunksize, k)  (chunksize*1024)        // k is data units #
-#  define TEST_TYPE_STR "_cold"
-# else
-#  define TEST_TYPE_STR "_cus"
-# endif
+#define TEST_LEN(chunksize, k) (chunksize * 1024) // k is data units #
+#define TEST_TYPE_STR "_cold"
+#else
+#define TEST_TYPE_STR "_cus"
+#endif
 #endif
 
 #define MMAX TEST_SOURCES
@@ -64,220 +64,225 @@
 
 typedef unsigned char u8;
 
-void ec_encode_data_stripes(int m, int k, u8 * g_tbls, u8 *** buffs, int len, int stripes, double *t)
+void ec_encode_data_stripes(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes, double *t)
 {
-	int x;
-	for (x = 0; x < stripes; x++) {
-		ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
-	}
+    int x;
+    for (x = 0; x < stripes; x++)
+    {
+        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
+    }
 }
 
-void ec_encode_data_stripes_detail(int m, int k, u8 * g_tbls, u8 *** buffs, int len, int stripes)
+void ec_encode_data_stripes_detail(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes)
 {
-	int x;
-	struct timespec start, stop;
-	for (x = 0; x < stripes; x++) {
-		clock_gettime( CLOCK_REALTIME, &start);
-		ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
-		clock_gettime( CLOCK_REALTIME, &stop);
-		double cost = (stop.tv_sec - start.tv_sec)+ (double)( stop.tv_nsec - start.tv_nsec )
-               		/ (double)BILLION;
-		printf( "%lf  x:%d stripes:%d  len:%d\n", cost, x, stripes, len);
-	}
+    int x;
+    struct timespec start, stop;
+    for (x = 0; x < stripes; x++)
+    {
+        clock_gettime(CLOCK_REALTIME, &start);
+        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
+        clock_gettime(CLOCK_REALTIME, &stop);
+        double cost = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / (double)BILLION;
+        printf("%lf  x:%d stripes:%d  len:%d\n", cost, x, stripes, len);
+    }
 }
 
-void ec_encode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 *** buffs, struct perf *start, int len, int stripes, double* t)
+void ec_encode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 ***buffs, struct perf *start, int len, int stripes, double *t)
 {
-	printf("init ec table..\n");
-	ec_init_tables(k, m - k, &a[k * k], g_tbls);
-	BENCHMARK(start, 0,
-		ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes, t))
+    printf("init ec table..\n");
+    ec_init_tables(k, m - k, &a[k * k], g_tbls);
+    BENCHMARK(start, 0,
+              ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes, t))
 }
 
-
-
-int ec_decode_perf(int m, int k, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_err,
-		   u8 * src_err_list, int nerrs, u8 ** temp_buffs, struct perf *start, int chunksize)
+int ec_decode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, u8 *src_in_err,
+                   u8 *src_err_list, int nerrs, u8 **temp_buffs, struct perf *start, int chunksize)
 {
-	int i, j, r;
-	u8 b[MMAX * KMAX], c[MMAX * KMAX], d[MMAX * KMAX];
-	u8 *recov[TEST_SOURCES];
+    int i, j, r;
+    u8 b[MMAX * KMAX], c[MMAX * KMAX], d[MMAX * KMAX];
+    u8 *recov[TEST_SOURCES];
 
-	// Construct b by removing error rows
-	for (i = 0, r = 0; i < k; i++, r++) {
-		while (src_in_err[r])
-			r++;
-		recov[i] = buffs[r];
-		for (j = 0; j < k; j++)
-			b[k * i + j] = a[k * r + j];
-	}
+    // Construct b by removing error rows
+    for (i = 0, r = 0; i < k; i++, r++)
+    {
+        while (src_in_err[r])
+            r++;
+        recov[i] = buffs[r];
+        for (j = 0; j < k; j++)
+            b[k * i + j] = a[k * r + j];
+    }
 
-	if (gf_invert_matrix(b, d, k) < 0)
-		return BAD_MATRIX;
+    if (gf_invert_matrix(b, d, k) < 0)
+        return BAD_MATRIX;
 
-	for (i = 0; i < nerrs; i++)
-		for (j = 0; j < k; j++)
-			c[k * i + j] = d[k * src_err_list[i] + j];
+    for (i = 0; i < nerrs; i++)
+        for (j = 0; j < k; j++)
+            c[k * i + j] = d[k * src_err_list[i] + j];
 
-	// Recover data
-	ec_init_tables(k, nerrs, c, g_tbls);
-	BENCHMARK(start, BENCHMARK_TIME,
-		  ec_encode_data(TEST_LEN(chunksize,k), k, nerrs, g_tbls, recov, temp_buffs));
+    // Recover data
+    ec_init_tables(k, nerrs, c, g_tbls);
+    BENCHMARK(start, BENCHMARK_TIME,
+              ec_encode_data(TEST_LEN(chunksize, k), k, nerrs, g_tbls, recov, temp_buffs));
 
-	return 0;
+    return 0;
 }
 
 int main(int argc, char *argv[])
 {
 
-	/* -------------------------------------------------------------------------- */
-	/*                              Argument Parsing                              */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                              Argument Parsing                              */
+    /* -------------------------------------------------------------------------- */
 
-	int i, j, m, k, p, x;
-	int chunksize, stripes, stripesize, len, datasize;
+    int i, j, m, k, p, x;
+    int chunksize, stripes, stripesize, len, datasize;
 
-	// Pick test parameters
-	// @meng: this means 10+4 EC
-	m = 14;
-	k = 10;
-	p = 4;
+    // Pick test parameters
+    // @meng: this means 10+4 EC
+    m = 14;
+    k = 10;
+    p = 4;
 
-	if (argc < 4)
-		printf("./erasure_code_perf_erasure_code_perf data_num parity_num chunksize\n");
+    if (argc < 4)
+        printf("./erasure_code_perf_erasure_code_perf data_num parity_num chunksize\n");
 
-	k = atoi(argv[1]);
-	p = atoi(argv[2]);
-	chunksize = atoi(argv[3]);	// in kb
-	len = chunksize * 1024;    // in bytes
-	stripesize = chunksize * k; // in kb
-	datasize = 1 * 1024 * 1024; //1 gib in kb
-	stripes = datasize / stripesize;
-	m = k + p;
-	printf("data_num:%d parity_num:%d m:%d chunksize:%dKB len:%dB stripesize:%dKB stripes:%d\n",
-		k, p, m, chunksize, len, stripesize, stripes);
+    k = atoi(argv[1]);
+    p = atoi(argv[2]);
+    chunksize = atoi(argv[3]);  // in kb
+    len = chunksize * 1024;     // in bytes
+    stripesize = chunksize * k; // in kb
+    datasize = 1 * 1024 * 1024; // 1 gib in kb
+    stripes = datasize / stripesize;
+    m = k + p;
+    printf("data_num:%d parity_num:%d m:%d chunksize:%dKB len:%dB stripesize:%dKB stripes:%d\n",
+           k, p, m, chunksize, len, stripesize, stripes);
 
-	printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, len, p);
+    printf("erasure_code_perf_erasure_code_perf: %dx%d %d\n", m, len, p);
 
-	/* -------------------------------------------------------------------------- */
-	/*                              Memory Allocation                             */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                              Memory Allocation                             */
+    /* -------------------------------------------------------------------------- */
 
-	struct perf start;
+    struct perf start;
 
-	printf("stripes:%d\n", stripes);
+    printf("stripes:%d\n", stripes);
 
-	// Allocating buffer space for stripes (data and parity shards).
-	u8*** buffs = (u8***) malloc(stripes * sizeof(u8**));
-	for (x = 0; x < stripes; x++)
-		buffs[x] = (u8**) malloc(m * sizeof(u8*));
+    // Allocating buffer space for stripes (data and parity shards).
+    u8 ***buffs = (u8 ***)malloc(stripes * sizeof(u8 **));
+    for (x = 0; x < stripes; x++)
+        buffs[x] = (u8 **)malloc(m * sizeof(u8 *));
 
-	// Needed for encoding and the cauchy matrix.
-	u8* a = (u8*) malloc(MMAX * KMAX * sizeof(u8));
+    // Needed for encoding and the cauchy matrix.
+    u8 *a = (u8 *)malloc(MMAX * KMAX * sizeof(u8));
 
-	// Needed for encoding (figure out what this is).
-	u8* g_tbls = (u8*) malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
+    // Needed for encoding (figure out what this is).
+    u8 *g_tbls = (u8 *)malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
 
-	printf("allocating space for buff...\n");
-	// Allocate the arrays
-	void* buf;
-	for (x = 0; x < stripes; x++) {
-		for (i = k; i < m; i++) {
-			// @meng: allocate TEST_LEN(chunksize,k) data for each disk
-			if (posix_memalign(&buf, 64, len)) {
-				printf("alloc error: Fail\n");
-				return -1;
-			}
-			buffs[x][i] = buf;
-		}
-	}
+    printf("allocating space for buff...\n");
+    // Allocate the arrays
+    void *buf;
+    for (x = 0; x < stripes; x++)
+    {
+        for (i = k; i < m; i++)
+        {
+            // @meng: allocate TEST_LEN(chunksize,k) data for each disk
+            if (posix_memalign(&buf, 64, len))
+            {
+                printf("alloc error: Fail\n");
+                return -1;
+            }
+            buffs[x][i] = buf;
+        }
+    }
 
-	printf("generating random data...\n");
+    printf("generating random data...\n");
 
-	printf("generating cauchy matrix...\n");
-	gf_gen_cauchy1_matrix(a, m, k);
+    printf("generating cauchy matrix...\n");
+    gf_gen_cauchy1_matrix(a, m, k);
 
-	/* -------------------------------------------------------------------------- */
-	/*                           Random File Generation                           */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                           Random File Generation                           */
+    /* -------------------------------------------------------------------------- */
 
-	double totaltime = 0.0;
-	int rounds = 50;
-	double totaltime5 = 0.0;
+    double totaltime = 0.0;
+    int rounds = 50;
+    double totaltime5 = 0.0;
 
-	FILE *textfile, *textfile2;
-	unsigned char *text, *text2;
-	long    numbytes, numbytes2;
-	char fname[] = "1gb-1.bin";
+    FILE *textfile, *textfile2;
+    unsigned char *text, *text2;
+    long numbytes, numbytes2;
+    char fname[] = "1gb-1.bin";
 
-	if (access(fname, F_OK) != 0) {
-		// File doesn't exist, create 1 GB file with random data.
-		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1g");
-	}
-	textfile = fopen(fname, "r");
-	fseek(textfile, 0L, SEEK_END);
-	numbytes = ftell(textfile);
-	fseek(textfile, 0L, SEEK_SET);
+    if (access(fname, F_OK) != 0)
+    {
+        // File doesn't exist, create 16 GB file with random data.
+        system("dd if=/dev/urandom of=1gb-1.bin bs=1 count=0 seek=1G");
+    }
+    textfile = fopen(fname, "r");
+    fseek(textfile, 0L, SEEK_END);
+    numbytes = ftell(textfile);
+    fseek(textfile, 0L, SEEK_SET);
 
-	text = (u8*)calloc(numbytes, sizeof(u8));
-	fread(text, sizeof(char), numbytes, textfile);
-	fclose(textfile);
+    text = (u8 *)calloc(numbytes, sizeof(u8));
+    fread(text, sizeof(char), numbytes, textfile);
+    fclose(textfile);
 
-	printf("numbytes:%ld\n", numbytes);
+    printf("numbytes:%ld\n", numbytes);
 
-	/* -------------------------------------------------------------------------- */
-	/*                                  Encoding                                  */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                                  Encoding                                  */
+    /* -------------------------------------------------------------------------- */
 
-	for (int y = 0; y < rounds; y++){
-		printf("...new round...\n");
-		struct timespec starttime, stop;
-		clock_gettime( CLOCK_REALTIME, &starttime);
-		{
-			int pos = 0;
-			for (x = 0; x < stripes; x++)
-				for (i = 0; i < k; i++) {
-					buffs[x][i] = &text[pos];
-					pos += len;
-				}
-	//		printf("pos:%d\n", pos);
-		}
+    for (int y = 0; y < rounds; y++)
+    {
+        printf("...new round...\n");
+        struct timespec starttime, stop;
+        clock_gettime(CLOCK_REALTIME, &starttime);
+        {
+            int pos = 0;
+            for (x = 0; x < stripes; x++)
+                for (i = 0; i < k; i++)
+                {
+                    buffs[x][i] = &text[pos];
+                    pos += len;
+                }
+            //		printf("pos:%d\n", pos);
+        }
 
-		ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes, &totaltime);
-		clock_gettime( CLOCK_REALTIME, &stop);
-		double cost = (stop.tv_sec - starttime.tv_sec)+ (double)( stop.tv_nsec - starttime.tv_nsec )
-               		/ (double)BILLION;
-		totaltime += cost;
-		if (y < 5)
-			totaltime5 += cost;
-		printf( "%lf  stripes:%d  len:%d totaltime5:%lf total time:%lf\n", cost, stripes, len, totaltime5, totaltime);
-	}
+        ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes, &totaltime);
+        clock_gettime(CLOCK_REALTIME, &stop);
+        double cost = (stop.tv_sec - starttime.tv_sec) + (double)(stop.tv_nsec - starttime.tv_nsec) / (double)BILLION;
+        totaltime += cost;
+        if (y < 5)
+            totaltime5 += cost;
+        printf("%lf  stripes:%d  len:%d totaltime5:%lf total time:%lf\n", cost, stripes, len, totaltime5, totaltime);
+    }
 
-	/* -------------------------------------------------------------------------- */
-	/*                           Throughput Calculation                           */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                           Throughput Calculation                           */
+    /* -------------------------------------------------------------------------- */
 
-	double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
-	double throughput2 = ((double)(stripes * stripesize)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
-	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
-	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
-			stripes * stripesize, totaltime, throughput, totaltime-totaltime5, throughput2);
-	perf_print(start, ((long long)(stripes * stripesize)) * 1024);
+    double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
+    double throughput2 = ((double)(stripes * stripesize)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
+    printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
+           stripes * stripesize, totaltime, throughput, totaltime - totaltime5, throughput2);
+    perf_print(start, ((long long)(stripes * stripesize)) * 1024);
 
-	/* -------------------------------------------------------------------------- */
-	/*                             Memory Deallocation                            */
-	/* -------------------------------------------------------------------------- */
+    /* -------------------------------------------------------------------------- */
+    /*                             Memory Deallocation                            */
+    /* -------------------------------------------------------------------------- */
 
-	for (x = 0; x < stripes; x++) {
-		for (i = k; i < m; i++)
-			free(buffs[x][i]);
-		free(buffs[x]);
-	}
-	free(buffs);
-	free(a);
-	free(g_tbls);
+    for (x = 0; x < stripes; x++)
+    {
+        for (i = k; i < m; i++)
+            free(buffs[x][i]);
+        free(buffs[x]);
+    }
+    free(buffs);
+    free(a);
+    free(g_tbls);
 
-
-	printf("done all: Pass\n");
-	return 0;
+    printf("done all: Pass\n");
+    return 0;
 }

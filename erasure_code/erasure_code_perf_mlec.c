@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
 
 	if (access(fname, F_OK) != 0) {
 		// File doesn't exist, create 1 GB file with random data.
-		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1g");
+		system("dd if=/dev/urandom of=1gb-1.bin bs=1 count=0 seek=1g");
 	}
 	textfile = fopen(fname, "r");
 	fseek(textfile, 0L, SEEK_END);
