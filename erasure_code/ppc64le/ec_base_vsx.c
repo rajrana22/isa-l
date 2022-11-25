@@ -17,7 +17,6 @@ void gf_vect_mad(int len, int vec, int vec_i, unsigned char *v,
 void ec_encode_data(int len, int srcs, int dests, unsigned char *v,
                     unsigned char **src, unsigned char **dest)
 {
-    printf("DEBUG: Entry Point ec_base_vsx\n");
     if (len < 64)
     {
         ec_encode_data_base(len, srcs, dests, v, src, dest);
@@ -99,7 +98,6 @@ void ec_encode_data_update(int len, int k, int rows, int vec_i, unsigned char *v
 
 int gf_vect_mul(int len, unsigned char *a, void *src, void *dest)
 {
-    printf("DEBUG: Entry Point ec_base_vsx\n");
     gf_vect_mul_vsx(len, a, (unsigned char *)src, (unsigned char *)dest);
     return 0;
 }

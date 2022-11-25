@@ -34,7 +34,6 @@
 void ec_encode_data_sse(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
                         unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_sse\n");
 
     if (len < 16)
     {
@@ -74,7 +73,6 @@ void ec_encode_data_sse(int len, int k, int rows, unsigned char *g_tbls, unsigne
 void ec_encode_data_avx(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
                         unsigned char **coding)
 {
-    printf("DEBUG: Are we here?");
     if (len < 16)
     {
         ec_encode_data_base(len, k, rows, g_tbls, data, coding);
@@ -113,7 +111,6 @@ void ec_encode_data_avx(int len, int k, int rows, unsigned char *g_tbls, unsigne
 void ec_encode_data_avx2(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
                          unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_avx2\n");
 
     if (len < 32)
     {
@@ -218,7 +215,6 @@ void ec_encode_data_avx512(int len, int k, int rows, unsigned char *g_tbls,
 void ec_encode_data_update_avx512(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
                                   unsigned char *data, unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_update_avx512\n");
     if (len < 64)
     {
         ec_encode_data_update_base(len, k, rows, vec_i, g_tbls, data, coding);
@@ -261,7 +257,6 @@ void ec_encode_data_update_avx512(int len, int k, int rows, int vec_i, unsigned 
 void ec_encode_data_update_sse(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
                                unsigned char *data, unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_update_sse\n");
     if (len < 16)
     {
         ec_encode_data_update_base(len, k, rows, vec_i, g_tbls, data, coding);
@@ -303,7 +298,6 @@ void ec_encode_data_update_sse(int len, int k, int rows, int vec_i, unsigned cha
 void ec_encode_data_update_avx(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
                                unsigned char *data, unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_update_avx\n");
     if (len < 16)
     {
         ec_encode_data_update_base(len, k, rows, vec_i, g_tbls, data, coding);
@@ -344,7 +338,6 @@ void ec_encode_data_update_avx(int len, int k, int rows, int vec_i, unsigned cha
 void ec_encode_data_update_avx2(int len, int k, int rows, int vec_i, unsigned char *g_tbls,
                                 unsigned char *data, unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_update_avx2\n");
     if (len < 32)
     {
         ec_encode_data_update_base(len, k, rows, vec_i, g_tbls, data, coding);
