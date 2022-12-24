@@ -69,11 +69,13 @@ void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 *g_tbls, u8 *
                             int stripes_l, int stripes_n, double *t)
 {
     int x, y;
-    for (x = 0; x < stripes_n; x++)
-    {
+    for (x = 0; x < stripes_n; x++) {
         ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n]);
-        for (y = 0; y < m_n; y++)
+        for (y = 0; y < m_n; y++) {
             ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, parities[x][y], &parities[x][y][k_l]);
+            __builtin_prefetch (&parities[x][y+len_l], 0, 1);
+        }
+        __builtin_prefetch (&buffs[x+len_n], 0, 1);
     }
 }
 

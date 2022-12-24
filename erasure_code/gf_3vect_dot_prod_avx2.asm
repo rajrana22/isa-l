@@ -57,7 +57,7 @@
  %define func(x) x: endbranch
  %macro FUNC_SAVE 0
 	push	r12
-	push	r13
+	push	r13 ; Stack pointer
  %endmacro
  %macro FUNC_RESTORE 0
 	pop	r13
@@ -268,17 +268,19 @@ section .text
 
 %endif
 
-align 16
-mk_global gf_3vect_dot_prod_avx2, function
+align 16 ; Align instruction to 16 bytes
+mk_global gf_3vect_dot_prod_avx2, function ; Make function visible to the linker
+
+; Begin function
 func(gf_3vect_dot_prod_avx2)
-	FUNC_SAVE
-	SLDR	len, len_m
-	sub	len, 32
-	SSTR	len_m, len
-	jl	.return_fail
-	xor	pos, pos
-	mov	tmp.b, 0x0f
-	vpinsrb	xmask0fx, xmask0fx, tmp.w, 0
+	FUNC_SAVE ; Save function to stack
+	SLDR	len, len_m ; Stack load and restore
+	sub	len, 32 ; Subtract 32 from 
+	SSTR	len_m, len ; Stack load and restore
+	jl	.return_fail ; Jump to return_fail if len_m < len (failure)
+	xor	pos, pos ; XOR operation on pos
+	mov	tmp.b, 0x0f ; move 15 to tmp.b
+	vpinsrb	xmask0fx, xmask0fx, tmp.w, 0 ; Merge a byte integer value from tmp.w and rest from xmask0fx into xmask0fx.
 	vpbroadcastb xmask0f, xmask0fx	;Construct mask 0x0f0f0f...
 
 	sal	vec, LOG_PS		;vec *= PS. Make vec_i count by PS
@@ -390,6 +392,7 @@ func(gf_3vect_dot_prod_avx2)
 	ret
 
 endproc_frame
+; End function
 
 section .data
 
