@@ -111,7 +111,6 @@ void ec_encode_data_avx(int len, int k, int rows, unsigned char *g_tbls, unsigne
 void ec_encode_data_avx2(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
                          unsigned char **coding)
 {
-    printf("YO\n");
     if (len < 32)
     {
         ec_encode_data_base(len, k, rows, g_tbls, data, coding);

@@ -35,6 +35,7 @@
 
 %ifdef HAVE_AS_KNOWS_AVX512
 
+; Linux/Unix
 %ifidn __OUTPUT_FORMAT__, elf64
  %define arg0  rdi
  %define arg1  rsi
@@ -59,6 +60,7 @@
  %endmacro
 %endif
 
+; Windows
 %ifidn __OUTPUT_FORMAT__, win64
  %define arg0   rcx
  %define arg1   rdx
@@ -115,15 +117,15 @@
 %endif
 
 
-%define len    arg0
-%define vec    arg1
-%define mul_array arg2
-%define src    arg3
-%define dest1  arg4
-%define ptr    arg5
+%define len    arg0 ; chunksize
+%define vec    arg1 ; data chunks k
+%define mul_array arg2 ; g_tbls
+%define src    arg3 ; data buffer
+%define dest1  arg4 ; parity buffer
+%define ptr    arg5 
 %define vec_i  tmp2
 %define dest2  tmp3
-%define pos    return
+%define pos    return ; pos is the return value
 
 
 %ifndef EC_ALIGNED_ADDR
@@ -159,37 +161,43 @@ default rel
 
 section .text
 
-align 16
-mk_global gf_2vect_dot_prod_avx512, function
-func(gf_2vect_dot_prod_avx512)
-	FUNC_SAVE
-	sub	len, 64
-	jl	.return_fail
+align 16 ; Align instruction to 16 bytes
+mk_global gf_2vect_dot_prod_avx512, function ; Make function visible to the linker
 
-	xor	pos, pos
-	mov	tmp, 0x0f
+; Begin function
+func(gf_2vect_dot_prod_avx512)
+	FUNC_SAVE ; Save function to stack
+	sub	len, 64 ; Subtract 64 from chunk size
+	jl	.return_fail ; Jump to return_fail if chunk size < 64
+
+	xor	pos, pos ; XOR operation on pos
+	mov	tmp, 0x0f ; move 15 to tmp
 	vpbroadcastb xmask0f, tmp	;Construct mask 0x0f0f0f...
 	sal	vec, LOG_PS		;vec *= PS. Make vec_i count by PS
-	mov	dest2, [dest1+PS]
-	mov	dest1, [dest1]
+	mov	dest2, [dest1+PS] ; move value at dest1 + 8 bytes to dest2 
+	mov	dest1, [dest1] ; NOP (align instruction)
 
+; Outer loop
+; Writes out the parity and resets for next inner loop.
 .loop64:
-	vpxorq	xp1, xp1, xp1
-	vpxorq	xp2, xp2, xp2
-	mov	tmp, mul_array
-	xor	vec_i, vec_i
+	vpxorq	xp1, xp1, xp1 ; Zeros out the accumulator xp1
+	vpxorq	xp2, xp2, xp2 ; Zeros out the accumulator xp2
+	mov	tmp, mul_array ; Moves the mul_array into tmp
+	xor	vec_i, vec_i ; vec_i = 0
 
+; Inner loop
+; Goes through each coefficient and source to multiply and accumulate.
 .next_vect:
-	mov	ptr, [src+vec_i]
-	XLDR	x0, [ptr+pos]		;Get next source vector
-	add	vec_i, PS
+	mov	ptr, [src+vec_i] ; Ptr becomes data buffer + vec_i
+	XLDR	x0, [ptr+pos] ; Get next source vector
+	add	vec_i, PS ; Add 8 to vec_i
 
-	vpandq	xtmpa, x0, xmask0f	;Mask low src nibble in bits 4-0
-	vpsraw	x0, x0, 4		;Shift to put high nibble into bits 4-0
-	vpandq	x0, x0, xmask0f		;Mask high src nibble in bits 4-0
+	vpandq	xtmpa, x0, xmask0f ; Mask low src nibble in bits 4-0
+	vpsraw	x0, x0, 4 ; Shift to put high nibble into bits 4-0
+	vpandq	x0, x0, xmask0f ; Mask high src nibble in bits 4-0
 
-	vmovdqu8 xgft1_loy, [tmp]		;Load array Ax{00}..{0f}, Ax{00}..{f0}
-	vmovdqu8 xgft2_loy, [tmp+vec*(32/PS)]	;Load array Bx{00}..{0f}, Bx{00}..{f0}
+	vmovdqu8 xgft1_loy, [tmp] ; Load array Ax{00}..{0f}, Ax{00}..{f0}
+	vmovdqu8 xgft2_loy, [tmp+vec*(32/PS)] ; Load array Bx{00}..{0f}, Bx{00}..{f0}
 	add	tmp, 32
 
 	vshufi64x2 xgft1_hi, xgft1_lo, xgft1_lo, 0x55
@@ -197,39 +205,41 @@ func(gf_2vect_dot_prod_avx512)
 	vshufi64x2 xgft2_hi, xgft2_lo, xgft2_lo, 0x55
 	vshufi64x2 xgft2_lo, xgft2_lo, xgft2_lo, 0x00
 
-	vpshufb	xgft1_hi, xgft1_hi, x0		;Lookup mul table of high nibble
-	vpshufb	xgft1_lo, xgft1_lo, xtmpa	;Lookup mul table of low nibble
-	vpxorq	xgft1_hi, xgft1_hi, xgft1_lo	;GF add high and low partials
-	vpxorq	xp1, xp1, xgft1_hi		;xp1 += partial
+	vpshufb	xgft1_hi, xgft1_hi, x0 ; Lookup mul table of high nibble
+	vpshufb	xgft1_lo, xgft1_lo, xtmpa ; Lookup mul table of low nibble
+	vpxorq	xgft1_hi, xgft1_hi, xgft1_lo ; GF add high and low partials
+	vpxorq	xp1, xp1, xgft1_hi ; xp1 += partial
 
-	vpshufb	xgft2_hi, xgft2_hi, x0		;Lookup mul table of high nibble
-	vpshufb	xgft2_lo, xgft2_lo, xtmpa	;Lookup mul table of low nibble
-	vpxorq	xgft2_hi, xgft2_hi, xgft2_lo	;GF add high and low partials
-	vpxorq	xp2, xp2, xgft2_hi		;xp2 += partial
+	vpshufb	xgft2_hi, xgft2_hi, x0 ; Lookup mul table of high nibble
+	vpshufb	xgft2_lo, xgft2_lo, xtmpa ; Lookup mul table of low nibble
+	vpxorq	xgft2_hi, xgft2_hi, xgft2_lo ; GF add high and low partials
+	vpxorq	xp2, xp2, xgft2_hi ; xp2 += partial
 
 	cmp	vec_i, vec
-	jl	.next_vect
+	jl	.next_vect ; Keep looping through while vec_i < vec
 
-	XSTR	[dest1+pos], xp1
-	XSTR	[dest2+pos], xp2
+	XSTR	[dest1+pos], xp1 ; Move value from accumulator xp1 to dest1+pos
+	XSTR	[dest2+pos], xp2 ; Move value from accumulator xp2 to dest2+pos
 
-	add	pos, 64			;Loop on 64 bytes at a time
-	cmp	pos, len
-	jle	.loop64
+	add	pos, 64	; Loop on 64 bytes at a time
+	cmp	pos, len ; Compare pos to chunk size
+	jle	.loop64 ; Jump to loop64 if pos <= chunk size
 
-	lea	tmp, [len + 64]
+	lea	tmp, [len + 64] ; Load address of len + 64 into temp
 	cmp	pos, tmp
-	je	.return_pass
+	je	.return_pass ; Jump to return pass if pos = address of len + 64
 
 	;; Tail len
-	mov	pos, len	;Overlapped offset length-64
-	jmp	.loop64		;Do one more overlap pass
+	mov	pos, len ; Overlapped offset length-64
+	jmp	.loop64 ; Do one more overlap pass
 
+; Return successfully
 .return_pass:
 	mov	return, 0
 	FUNC_RESTORE
 	ret
 
+; Return with error code
 .return_fail:
 	mov	return, 1
 	FUNC_RESTORE
