@@ -167,31 +167,37 @@ mk_global gf_2vect_dot_prod_avx512, function ; Make function visible to the link
 ; Begin function
 func(gf_2vect_dot_prod_avx512)
 	FUNC_SAVE ; Save function to stack
+
+    ; ec_highlevel_func.c requirement
 	sub	len, 64 ; Subtract 64 from chunk size
 	jl	.return_fail ; Jump to return_fail if chunk size < 64
 
-	xor	pos, pos ; XOR operation on pos
+	xor	pos, pos ; pos = 0
 	mov	tmp, 0x0f ; move 15 to tmp
 	vpbroadcastb xmask0f, tmp	;Construct mask 0x0f0f0f...
 	sal	vec, LOG_PS		;vec *= PS. Make vec_i count by PS
-	mov	dest2, [dest1+PS] ; move value at dest1 + 8 bytes to dest2 
+	mov	dest2, [dest1+PS] ; move value at dest1 + PS to dest2
 	mov	dest1, [dest1] ; NOP (align instruction)
 
-; Outer loop
-; Writes out the parity and resets for next inner loop.
+; pos moves on 64 bytes at a time (this is the slice size)
+; vec_i moves on 8 bytes at a time (size of each data chunk)
+
+; Begin outer loop
 .loop64:
-	vpxorq	xp1, xp1, xp1 ; Zeros out the accumulator xp1
-	vpxorq	xp2, xp2, xp2 ; Zeros out the accumulator xp2
+    ; Resets for next inner loop.
+	vpxorq	xp1, xp1, xp1 ; Accumulator xp1 = 0
+	vpxorq	xp2, xp2, xp2 ; Accumulator xp2 = 0
 	mov	tmp, mul_array ; Moves the mul_array into tmp
 	xor	vec_i, vec_i ; vec_i = 0
 
-; Inner loop
-; Goes through each coefficient and source to multiply and accumulate.
+; Begin inner loop
 .next_vect:
+    ; Goes through each coefficient and source to multiply and accumulate.
 	mov	ptr, [src+vec_i] ; Ptr becomes data buffer + vec_i
 	XLDR	x0, [ptr+pos] ; Get next source vector
 	add	vec_i, PS ; Add 8 to vec_i
 
+    ; Begin erasure computation
 	vpandq	xtmpa, x0, xmask0f ; Mask low src nibble in bits 4-0
 	vpsraw	x0, x0, 4 ; Shift to put high nibble into bits 4-0
 	vpandq	x0, x0, xmask0f ; Mask high src nibble in bits 4-0
@@ -214,16 +220,21 @@ func(gf_2vect_dot_prod_avx512)
 	vpshufb	xgft2_lo, xgft2_lo, xtmpa ; Lookup mul table of low nibble
 	vpxorq	xgft2_hi, xgft2_hi, xgft2_lo ; GF add high and low partials
 	vpxorq	xp2, xp2, xgft2_hi ; xp2 += partial
+    ; End erasure computation
 
+    ; Loop through all k data chunks (vec = k)
 	cmp	vec_i, vec
 	jl	.next_vect ; Keep looping through while vec_i < vec
+    ; End inner loop.
 
+    ; Write out parities to dest buffers.
 	XSTR	[dest1+pos], xp1 ; Move value from accumulator xp1 to dest1+pos
 	XSTR	[dest2+pos], xp2 ; Move value from accumulator xp2 to dest2+pos
 
 	add	pos, 64	; Loop on 64 bytes at a time
 	cmp	pos, len ; Compare pos to chunk size
 	jle	.loop64 ; Jump to loop64 if pos <= chunk size
+    ; End outer loop
 
 	lea	tmp, [len + 64] ; Load address of len + 64 into temp
 	cmp	pos, tmp

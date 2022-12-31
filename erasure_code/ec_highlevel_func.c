@@ -201,6 +201,7 @@ void ec_encode_data_avx512(int len, int k, int rows, unsigned char *g_tbls,
         gf_3vect_dot_prod_avx512(len, k, g_tbls, data, coding);
         break;
     case 2:
+        // m_gf_2vect_dor_prod_avx512(len, k, g_tbls, data, coding);
         gf_2vect_dot_prod_avx512(len, k, g_tbls, data, coding);
         break;
     case 1:
