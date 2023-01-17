@@ -28,7 +28,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;
-;;; gf_2vect_dot_prod_avx512(len, vec, *g_tbls, **buffs, **dests);
+;;; gf_2vect_dot_prod_avx512(len_n, vec_n, *g_tbls_n, **buffs_n, **dests_n, len_l, vec_l, *g_tbls_l, **buffs_l, **dests_l);
 ;;;
 
 %include "reg_sizes.asm"
@@ -37,26 +37,38 @@
 
 ; Linux/Unix
 %ifidn __OUTPUT_FORMAT__, elf64
- %define arg0  rdi
- %define arg1  rsi
- %define arg2  rdx
- %define arg3  rcx
- %define arg4  r8
- %define arg5  r9
+ %define arg0 rdi
+ %define arg1 rsi
+ %define arg2 rdx
+ %define arg3 rcx
+ %define arg4 r8
+ %define arg5 r9
+ %define arg6 r10 ; New registers used to store function args
+ %define arg7 r11
+ %define arg8 r12
+ %define arg9 r13
 
- %define tmp   r11
- %define tmp2  r10
- %define tmp3  r12		; must be saved and restored
- %define return rax
+ %define tmp r15
+ %define tmp2 r14
+ %define tmp3 rbx ; must be saved and restored
  %define PS     8
  %define LOG_PS 3
 
+; Save and restore more registers
  %define func(x) x: endbranch
  %macro FUNC_SAVE 0
-	push	r12
+	push	rbx
+    push r12
+    push r13
+    push r14
+    push r15
  %endmacro
  %macro FUNC_RESTORE 0
-	pop	r12
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+	pop	rbx
  %endmacro
 %endif
 
@@ -69,6 +81,8 @@
 
  %define arg4   r12 		; must be saved, loaded and restored
  %define arg5   r15 		; must be saved and restored
+ %define arg6 r13           ; must be saved and restored
+ %define arg7 r14           ; must be saved and restored
  %define tmp    r11
  %define tmp2   r10
  %define tmp3   r13		; must be saved and restored
@@ -95,7 +109,10 @@
 	save_reg	r14,  9*16 + 2*8
 	save_reg	r15,  9*16 + 3*8
 	end_prolog
-	mov	arg4, arg(4)
+	mov arg4, arg(4)
+    mov arg5, arg(5)
+    mov arg6, arg(6)
+    mov arg7, arg(7)
  %endmacro
 
  %macro FUNC_RESTORE 0
@@ -113,19 +130,25 @@
 	mov	r14,  [rsp + 9*16 + 2*8]
 	mov	r15,  [rsp + 9*16 + 3*8]
 	add	rsp, stack_size
+    mov arg5, r15
+    mov arg4, r12
  %endmacro
 %endif
 
-
-%define len    arg0 ; chunksize
-%define vec    arg1 ; data chunks k
-%define mul_array arg2 ; g_tbls
-%define src    arg3 ; data buffer
-%define dest1  arg4 ; parity buffer
-%define ptr    arg5 
-%define vec_i  tmp2
-%define dest2  tmp3
-%define pos    return ; pos is the return value
+; Include both network and local portions of MLEC
+%define len_n       arg0 ; network chunksize
+%define vec_n       arg1 ; network data chunks k
+%define g_tbls_n    arg2 ; network g_tbls
+%define buffs_n     arg3 ; network data buffer
+%define dests_n     arg4 ; network parity buffer
+%define len_l       arg5 ; local chunksize
+%define vec_l       arg6 ; local data chunks k
+%define g_tbls_l    arg7 ; local g_tbls
+%define buffs_l     arg8 ; local data buffer
+%define dests_l     arg9 ; local parity buffer
+%define ptr         tmp2
+%define vec_i       tmp3
+%define pos         return ; pos is the return value
 
 
 %ifndef EC_ALIGNED_ADDR
@@ -143,6 +166,7 @@
  %endif
 %endif
 
+; Define xmm and ymm registers for use in storing intermediate results
 %define xmask0f   zmm8
 %define xgft1_lo  zmm7
 %define xgft1_loy ymm7
@@ -156,6 +180,7 @@
 %define xp1       zmm2
 %define xp2       zmm3
 
+; Assembler directives
 default rel
 [bits 64]
 
@@ -169,15 +194,23 @@ func(gf_2vect_dot_prod_avx512)
 	FUNC_SAVE ; Save function to stack
 
     ; ec_highlevel_func.c requirement
-	sub	len, 64 ; Subtract 64 from chunk size
+	sub	len_n, 64 ; Subtract 64 from chunk size
+	jl	.return_fail ; Jump to return_fail if chunk size < 64
+    sub	len_l, 64 ; Subtract 64 from chunk size
 	jl	.return_fail ; Jump to return_fail if chunk size < 64
 
-	xor	pos, pos ; pos = 0
-	mov	tmp, 0x0f ; move 15 to tmp
-	vpbroadcastb xmask0f, tmp	;Construct mask 0x0f0f0f...
-	sal	vec, LOG_PS		;vec *= PS. Make vec_i count by PS
-	mov	dest2, [dest1+PS] ; move value at dest1 + PS to dest2
-	mov	dest1, [dest1] ; NOP (align instruction)
+	xor	pos_n, pos_n ; pos = 0
+    xor	pos_l, pos_l ; pos = 0
+	mov	tmp_n, 0x0f ; move 15 to tmp
+    mov	tmp_l, 0x0f ; move 15 to tmp
+	vpbroadcastb xmask0f_n, tmp_n	;Construct mask 0x0f0f0f...
+    vpbroadcastb xmask0f_l, tmp_l	;Construct mask 0x0f0f0f...
+	sal	vec_n, LOG_PS		;vec *= PS. Make vec_i count by PS
+    sal	vec_l, LOG_PS		;vec *= PS. Make vec_i count by PS
+	mov	dest2_n, [dest1_n+PS] ; move value at dest1 + PS to dest2
+    mov	dest2_l, [dest1_l+PS] ; move value at dest1 + PS to dest2
+	mov	dest1_n, [dest1_n] ; NOP (align instruction)
+    mov	dest1_l, [dest1_l] ; NOP (align instruction)
 
 ; pos moves on 64 bytes at a time (this is the slice size)
 ; vec_i moves on 8 bytes at a time (size of each data chunk)
@@ -185,74 +218,60 @@ func(gf_2vect_dot_prod_avx512)
 ; Begin outer loop
 .loop64:
     ; Resets for next inner loop.
-	vpxorq	xp1, xp1, xp1 ; Accumulator xp1 = 0
-	vpxorq	xp2, xp2, xp2 ; Accumulator xp2 = 0
-	mov	tmp, mul_array ; Moves the mul_array into tmp
-	xor	vec_i, vec_i ; vec_i = 0
+	vpxorq	xp1_n, xp1_n, xp1_n ; Accumulator xp1 = 0
+    vpxorq	xp1_l, xp1_l, xp1_l ; Accumulator xp1 = 0
+	vpxorq	xp2_n, xp2_n, xp2_n ; Accumulator xp2 = 0
+    vpxorq	xp2_l, xp2_l, xp2_l ; Accumulator xp2 = 0
+	mov	tmp_n, mul_array_n ; Moves the mul_array into tmp
+    mov	tmp_l, mul_array_l ; Moves the mul_array into tmp
+	xor	vec_i_n, vec_i_n ; vec_i = 0
+    xor	vec_i_l, vec_i_l ; vec_i = 0
 
 ; Begin inner loop
 .next_vect:
     ; Goes through each coefficient and source to multiply and accumulate.
-	mov	ptr, [src+vec_i] ; Ptr becomes data buffer + vec_i
-	XLDR	x0, [ptr+pos] ; Get next source vector
-	add	vec_i, PS ; Add 8 to vec_i
+    mov    ptr_n, [src_n+vec_i_n] ; Ptr_n becomes data buffer + vec_i_n
+    XLDR   x0_n, [ptr_n+pos_n] ; Get next source vector_n
+    add    vec_i_n, PS ; Add 8 to vec_i_n
+    mov    ptr_l, [src_l+vec_i_l] ; Ptr_l becomes data buffer + vec_i_l
+    XLDR   x0_l, [ptr_l+pos_l] ; Get next source vector_l
+    add    vec_i_l, PS ; Add 8 to vec_i_l
 
-    ; Begin erasure computation
-	vpandq	xtmpa, x0, xmask0f ; Mask low src nibble in bits 4-0
-	vpsraw	x0, x0, 4 ; Shift to put high nibble into bits 4-0
-	vpandq	x0, x0, xmask0f ; Mask high src nibble in bits 4-0
+    ; Begin erasure computation for N layer
+    vpandq   xtmpa_n, x0_n, xmask0f ; Mask low src nibble in bits 4-0
+    vpsraw   x0_n, x0_n, 4 ; Shift to put high nibble into bits 4-0
+    vpandq   x0_n, x0_n, xmask0f ; Mask high src nibble in bits 4-0
 
-	vmovdqu8 xgft1_loy, [tmp] ; Load array Ax{00}..{0f}, Ax{00}..{f0}
-	vmovdqu8 xgft2_loy, [tmp+vec*(32/PS)] ; Load array Bx{00}..{0f}, Bx{00}..{f0}
-	add	tmp, 32
+    vmovdqu8 xgft1_loy_n, [tmp_n] ; Load array Ax{00}..{0f}, Ax{00}..{f0}
+    vmovdqu8 xgft2_loy_n, [tmp_n+vec_n*(32/PS)] ; Load array Bx{00}..{0f}, Bx{00}..{f0}
+    add     tmp_n, 32
 
-	vshufi64x2 xgft1_hi, xgft1_lo, xgft1_lo, 0x55
-	vshufi64x2 xgft1_lo, xgft1_lo, xgft1_lo, 0x00
-	vshufi64x2 xgft2_hi, xgft2_lo, xgft2_lo, 0x55
-	vshufi64x2 xgft2_lo, xgft2_lo, xgft2_lo, 0x00
+    vshufi64x2 xgft1_hi_n, xgft1_lo_n, xgft1_lo_n, 0x55
+    vshufi64x2 xgft1_lo_n, xgft1_lo_n, xgft1_lo_n, 0x00
+    vshufi64x2 xgft2_hi_n, xgft2_lo_n, xgft2_lo_n, 0x55
+    vshufi64x2 xgft2_lo_n, xgft2_lo_n, xgft2_lo_n, 0x00
 
-	vpshufb	xgft1_hi, xgft1_hi, x0 ; Lookup mul table of high nibble
-	vpshufb	xgft1_lo, xgft1_lo, xtmpa ; Lookup mul table of low nibble
-	vpxorq	xgft1_hi, xgft1_hi, xgft1_lo ; GF add high and low partials
-	vpxorq	xp1, xp1, xgft1_hi ; xp1 += partial
+    vpshufb xgft2_hi_n, xgft2_hi_n, x0_n ; Lookup mul table of high nibble
+	vpshufb xgft2_lo_n, xgft2_lo_n, xtmpa_n ; Lookup mul table of low nibble
+	vpxorq xgft2_hi_n, xgft2_hi_n, xgft2_lo_n ; GF add high and low partials
+	vpxorq xp2_n, xp2_n, xgft2_hi_n ; xp2_n += partial
 
-	vpshufb	xgft2_hi, xgft2_hi, x0 ; Lookup mul table of high nibble
-	vpshufb	xgft2_lo, xgft2_lo, xtmpa ; Lookup mul table of low nibble
-	vpxorq	xgft2_hi, xgft2_hi, xgft2_lo ; GF add high and low partials
-	vpxorq	xp2, xp2, xgft2_hi ; xp2 += partial
-    ; End erasure computation
+	cmp vec_i_n, vec
+	jl .next_vect_n
 
-    ; Loop through all k data chunks (vec = k)
-	cmp	vec_i, vec
-	jl	.next_vect ; Keep looping through while vec_i < vec
-    ; End inner loop.
-
-    ; Write out parities to dest buffers.
-	XSTR	[dest1+pos], xp1 ; Move value from accumulator xp1 to dest1+pos
-	XSTR	[dest2+pos], xp2 ; Move value from accumulator xp2 to dest2+pos
-
-	add	pos, 64	; Loop on 64 bytes at a time
-	cmp	pos, len ; Compare pos to chunk size
-	jle	.loop64 ; Jump to loop64 if pos <= chunk size
-    ; End outer loop
-
-	lea	tmp, [len + 64] ; Load address of len + 64 into temp
-	cmp	pos, tmp
-	je	.return_pass ; Jump to return pass if pos = address of len + 64
-
-	;; Tail len
-	mov	pos, len ; Overlapped offset length-64
-	jmp	.loop64 ; Do one more overlap pass
-
-; Return successfully
-.return_pass:
-	mov	return, 0
+	add pos, 64
+	cmp pos, len
+	jl .loop64
+	
+	; Accumulate xp1 and xp2 into dest1 and dest2
+	vpxorq	[dest1], xp1_n, [dest1]
+	vpxorq	[dest2], xp2_n, [dest2]
+	
 	FUNC_RESTORE
 	ret
 
-; Return with error code
 .return_fail:
-	mov	return, 1
+	xor	eax, eax
 	FUNC_RESTORE
 	ret
 

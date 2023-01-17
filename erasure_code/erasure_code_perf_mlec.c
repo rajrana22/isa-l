@@ -70,14 +70,16 @@ void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 *g_tbls, u8 *
 {
     int x, y;
     for (x = 0; x < stripes_n; x++) {
-        ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n]);
-
-        for (y = 0; y < m_n; y++) {
-            ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, parities[x][y], &parities[x][y][k_l]);
-        }
+        ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n],
+                         len_l, k_l, m_l - k_l, g_tbls, parities[x][0], &parities[x][0][k_l])
         
     }
 }
+
+/*
+mlec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n],
+                         len_l, k_l, m_l - k_l, g_tbls, parities[x][0], &parities[x][0][k_l])
+*/
 
 void ec_encode_data_stripes_detail(int m_l, int k_l, u8 *g_tbls, u8 ***buffs, int len_l, int stripes_l)
 {
