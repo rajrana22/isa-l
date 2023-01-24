@@ -148,8 +148,8 @@ void ec_encode_data_avx2(int len, int k, int rows, unsigned char *g_tbls, unsign
 
 #ifdef HAVE_AS_KNOWS_AVX512
 
-extern int gf_vect_dot_prod_avx512(int len_n, int k_n, int rows_n, unsigned char *g_tbls_n, unsigned char **data_n,
-                                    unsigned char **coding_n, int len_l, int k_l, int rows_l, unsigned char *g_tbls_l,
+extern int gf_vect_dot_prod_avx512(int len_n, int k_n, int rows_n, unsigned char *g_tbls, unsigned char **data_n,
+                                    unsigned char **coding_n, int len_l, int k_l, int rows_l,
                                     unsigned char **data_l, unsigned char **coding_l);
 
 /* len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n],
@@ -161,15 +161,15 @@ int len_n, int k_n, int rows_n, unsigned char *g_tbls_n, unsigned char **data_k,
 int len_l, int k_l, int rows_l, unsigned char *g_tbls_l, unsigned char **data_l, unsigned char **coding_l
 */
 
-void ec_encode_data_avx512(int len_n, int k_n, int rows_n, unsigned char *g_tbls_n, unsigned char **data_n,
-                                    unsigned char **coding_n, int len_l, int k_l, int rows_l, unsigned char *g_tbls_l,
+void ec_encode_data_avx512(int len_n, int k_n, int rows_n, unsigned char *g_tbls, unsigned char **data_n,
+                                    unsigned char **coding_n, int len_l, int k_l, int rows_l,
                                     unsigned char **data_l, unsigned char **coding_l)
 {
     switch (rows_n) {
         case 1:
         switch (rows_l) {
             case 1:
-             gf_vect_mad_avx512_mlec(len_n, k_n, g_tbls_n, data_n, coding_n, len_l, k_l, g_tbls_l, data_l, coding_l)
+             gf_vect_mad_avx512_mlec(len_n, k_n, g_tbls, data_n, coding_n, len_l, k_l, data_l, coding_l);
         }
     }
 }
