@@ -28,7 +28,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;
-;;; gf_2vect_dot_prod_avx512(len_n, vec_n, *g_tbls, **buffs_n, **dests_n, len_l, vec_l, **buffs_l, **dests_l);
+;;; gf_2vect_dot_prod_avx512(len_n, k_n, *g_tbls, **buffs_n, **dests_n, len_l, k_l, **buffs_l, **dests_l);
 ;;;
 
 %include "reg_sizes.asm"
@@ -43,34 +43,38 @@
  %define arg3 rcx
  %define arg4 r8
  %define arg5 r9
- %define arg6 r10 ; New registers used to store function args
+ %define arg6 r10
  %define arg7 r11
  %define arg8 r12
 
  %define tmp r15
  %define tmp2 r14
  %define tmp3 rbx ; must be saved and restored
+ %define tmp4 r13
+ %define tmp5 r12
+ %define tmp6 r11
+ %define tmp7 r10
+ %define return rax
  %define PS     8
  %define LOG_PS 3
 
-; Save and restore more registers
+; Save and restore function arguments that won't fit into registers on the stack
  %define func(x) x: endbranch
  %macro FUNC_SAVE 0
-	push	rbx
-    push r12
-    push r13
-    push r14
-    push r15
+	push rbx
+    push arg6
+    push arg7
+    push arg8
  %endmacro
  %macro FUNC_RESTORE 0
-    pop r15
-    pop r14
-    pop r13
-    pop r12
+    pop arg8
+    pop arg7
+    pop arg6
 	pop	rbx
  %endmacro
 %endif
 
+; Begin ignore
 ; Windows
 %ifidn __OUTPUT_FORMAT__, win64
  %define arg0   rcx
@@ -133,6 +137,7 @@
     mov arg4, r12
  %endmacro
 %endif
+; End ignore
 
 ; Include both network and local portions of MLEC
 %define len_n       arg0 ; network chunksize
@@ -144,12 +149,14 @@
 %define k_l         arg6 ; local data chunks k_l
 %define buffs_l     arg7 ; local data buffer
 %define dest_l      arg8 ; local parity buffer
-%define ptr         tmp3 ; 
+%define ptr         tmp3 ; pointer to next chunk
 %define n_i         tmp4 ; network counter
 %define l_i         tmp5 ; local counter
-%define dest2       tmp6 ; Offset parity buffer
+%define dest2_n     tmp6 ; network offset parity buffer
+%define dest2_l     tmp7 ; local offset parity buffer
 %define pos         return ; pos is the return value
-; Reusable values: ptr, pos, vec_i
+
+;;; gf_2vect_dot_prod_avx512(len_n, k_n, *g_tbls, **buffs_n, **dests_n, len_l, k_l, **buffs_l, **dests_l);
 
 
 %ifndef EC_ALIGNED_ADDR
@@ -206,19 +213,14 @@ func(gf_2vect_dot_prod_avx512)
 	vpbroadcastb xmask0f, tmp	;Construct mask 0x0f0f0f...
 
     ; Set up network looping and data loading conditions
-	sal	k_n, LOG_PS		;k_n *= PS. Make n_i count by PS (8)
-	mov	dest2_n, [dest_n+PS] ; move value at dest_n + PS to dest2_n
+	sal	k_n, LOG_PS		; k_n *= PS. Make n_i count by PS (8)
+	mov	dest2_n, [dest_n + PS] ; move value at dest_n + PS to dest2_n
 	mov	dest_n, [dest_n] ; NOP (align instruction)
 
     ; Set up local looping and data loading conditions
-    sal	k_l, LOG_PS		;k_l *= PS. Make l_i count by PS (8)
-	mov	dest2_l, [dest_l+PS] ; move value at dest_l + PS to dest2_l
+    sal k_l, LOG_PS      ; k_l *= PS. Make l_i count by PS (8)
+	mov	dest2_l, [dest_l + PS] ; move value at dest_l + PS to dest2_l
 	mov	dest_l, [dest_l] ; NOP (align instruction)
-    
-    ; NOTE: This part was confusing - What value do I iterate
-    ;       by for the network loop, and what do I put for
-    ;       the local loop? Since these are byte values, we
-    ;       need to make sure that we loop over 8 * loc_chunksize?
 
     ; Begin outer loop for network chunks
     .loop64:
@@ -231,14 +233,33 @@ func(gf_2vect_dot_prod_avx512)
         ; Begin inner loop for network chunks
         .next_net_vect:
             ; Load next network data chunk
-            mov	ptr, [buffs_n + n_i]
-            XLDR x0, [ptr + pos] ; Network data buffer offset by pos + n_i
+            mov	ptr, [buffs_n + n_i] ; Pointer to next array -> net_data[n_i]
+            XLDR x0, [ptr + pos] ; Load data from specific offset -> net_data[n_i][pos]
             add	n_i, PS ; Add 8 to network counter
-            ; NOTE: 8 bytes doesn't make sense here
-            ; TO DO: Replace PS with 8 * len_l
             
             ; Begin network erasure computation
-            ...
+            vpandq	xtmpa, x0, xmask0f ; Mask low src nibble in bits 4-0
+            vpsraw	x0, x0, 4 ; Shift to put high nibble into bits 4-0
+            vpandq	x0, x0, xmask0f ; Mask high src nibble in bits 4-0
+
+            vmovdqu8 xgft1_loy, [tmp] ; Load array Ax{00}..{0f}, Ax{00}..{f0}
+            vmovdqu8 xgft2_loy, [tmp+k_n*(32/PS)] ; Load array Bx{00}..{0f}, Bx{00}..{f0}
+            add	tmp, 32
+
+            vshufi64x2 xgft1_hi, xgft1_lo, xgft1_lo, 0x55
+            vshufi64x2 xgft1_lo, xgft1_lo, xgft1_lo, 0x00
+            vshufi64x2 xgft2_hi, xgft2_lo, xgft2_lo, 0x55
+            vshufi64x2 xgft2_lo, xgft2_lo, xgft2_lo, 0x00
+
+            vpshufb	xgft1_hi, xgft1_hi, x0 ; Lookup mul table of high nibble
+            vpshufb	xgft1_lo, xgft1_lo, xtmpa ; Lookup mul table of low nibble
+            vpxorq	xgft1_hi, xgft1_hi, xgft1_lo ; GF add high and low partials
+            vpxorq	xp1_net, xp1_net, xgft1_hi ; xp1_net += partial
+
+            vpshufb	xgft2_hi, xgft2_hi, x0 ; Lookup mul table of high nibble
+            vpshufb	xgft2_lo, xgft2_lo, xtmpa ; Lookup mul table of low nibble
+            vpxorq	xgft2_hi, xgft2_hi, xgft2_lo ; GF add high and low partials
+            vpxorq	xp2_net, xp2_net, xgft2_hi ; xp2_net += partial
             ; End network erasure computation
 
             ; Reset local temporary variables
@@ -250,24 +271,44 @@ func(gf_2vect_dot_prod_avx512)
             ; Begin inner loop for local chunks
             .next_loc_vect:
                 ; Load next local data chunk
-                XLDR x0, [buffs_l + l_i] ; Local data buffer offset by l_i
-                add	l_i, PS ; Add 8 to local counter
-                ; NOTE: 8 bytes makes sense here, because sizeof(loc_chunk) = 8
+                mov ptr, [buffs_l + l_i] ; Pointer to next array -> loc_data[l_i]
+                XLDR x0, [ptr + pos] ; Load local data from specific offset -> loc_data[l_i][pos]
+                add	l_i, PS ; Add 8 to l_i
 
                 ; Begin local erasure computations
-                ...
+                vpandq	xtmpa, x0, xmask0f ; Mask low src nibble in bits 4-0
+                vpsraw	x0, x0, 4 ; Shift to put high nibble into bits 4-0
+                vpandq	x0, x0, xmask0f ; Mask high src nibble in bits 4-0
+
+                vmovdqu8 xgft1_loy, [tmp2] ; Load array Ax{00}..{0f}, Ax{00}..{f0}
+                vmovdqu8 xgft2_loy, [tmp2+k_l*(32/PS)] ; Load array Bx{00}..{0f}, Bx{00}..{f0}
+                add	tmp2, 32
+
+                vshufi64x2 xgft1_hi, xgft1_lo, xgft1_lo, 0x55
+                vshufi64x2 xgft1_lo, xgft1_lo, xgft1_lo, 0x00
+                vshufi64x2 xgft2_hi, xgft2_lo, xgft2_lo, 0x55
+                vshufi64x2 xgft2_lo, xgft2_lo, xgft2_lo, 0x00
+
+                vpshufb	xgft1_hi, xgft1_hi, x0 ; Lookup mul table of high nibble
+                vpshufb	xgft1_lo, xgft1_lo, xtmpa ; Lookup mul table of low nibble
+                vpxorq	xgft1_hi, xgft1_hi, xgft1_lo ; GF add high and low partials
+                vpxorq	xp1_loc, xp1_loc, xgft1_hi ; xp1_loc += partial
+
+                vpshufb	xgft2_hi, xgft2_hi, x0 ; Lookup mul table of high nibble
+                vpshufb	xgft2_lo, xgft2_lo, xtmpa ; Lookup mul table of low nibble
+                vpxorq	xgft2_hi, xgft2_hi, xgft2_lo ; GF add high and low partials
+                vpxorq	xp2_loc, xp2_loc, xgft2_hi ; xp2_loc += partial
                 ; End local erasure computation
 
                 ; Local loop condition
-                cmp	n_l, k_l ; Loop through all k local data chunks
+                cmp	l_i, k_l ; Loop through all k local data chunks
                 jl	.next_loc_vect ; Keep looping through while l_i < k_n
 
                 ; End inner loop for local chunks
 
                 ; Write out local parities in loc_temp buffer to loc_dest buffer
-                XSTR [dest_l + ?], xp1_loc ; Move value from accumulator xp1_loc to dest_l + ?
-                XSTR [dest2_l + ?], xp2_loc ; Move value from accumulator xp2_loc to dest2_l + ?
-                ; NOTE: What offset do we store in for the local loop?
+                XSTR [dest_l + pos], xp1_loc ; Move value from accumulator xp1_loc to dest_l + pos
+                XSTR [dest2_l + pos], xp2_loc ; Move value from accumulator xp2_loc to dest2_l + pos
 
             ; Network loop condition
             cmp	n_i, k_n ; Loop through all k network data chunks

@@ -70,8 +70,8 @@ void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 *g_tbls, u8 *
 {
     int x, y;
     for (x = 0; x < stripes_n; x++) {
-        ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n],
-                         len_l, k_l, m_l - k_l, parities[x][0], &parities[x][0][k_l])
+        ec_encode_data(len_n, k_n, m_n - k_n, g_tbls, buffs[x], &buffs[x][k_n],
+                         len_l, k_l, m_l - k_l, parities[x][0], &parities[x][0][k_l]);
         
     }
 }
@@ -88,7 +88,7 @@ void ec_encode_data_stripes_detail(int m_l, int k_l, u8 *g_tbls, u8 ***buffs, in
     for (x = 0; x < stripes_l; x++)
     {
         clock_gettime(CLOCK_REALTIME, &start);
-        ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, buffs[x], &buffs[x][k_l]);
+        // ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, buffs[x], &buffs[x][k_l]);
         clock_gettime(CLOCK_REALTIME, &stop);
         double cost = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / (double)BILLION;
         printf("%lf  x:%d stripes_l:%d  len_l:%d\n", cost, x, stripes_l, len_l);
@@ -133,8 +133,8 @@ int ec_decode_perf(int m_l, int k_l, u8 *a, u8 *g_tbls, u8 **buffs, u8 *src_in_e
 
     // Recover data
     ec_init_tables(k_l, nerrs, c, g_tbls);
-    BENCHMARK(start, BENCHMARK_TIME,
-              ec_encode_data(TEST_LEN(chunksize_l, k_l), k_l, nerrs, g_tbls, recov, temp_buffs));
+    // BENCHMARK(start, BENCHMARK_TIME,
+            //   ec_encode_data(TEST_LEN(chunksize_l, k_l), k_l, nerrs, g_tbls, recov, temp_buffs));
 
     return 0;
 }

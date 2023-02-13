@@ -95,8 +95,9 @@ extern "C"
      * @returns none
      */
 
-    void ec_encode_data(int len, int k, int rows, unsigned char *gftbls, unsigned char **data,
-                        unsigned char **coding);
+    void ec_encode_data(int len_n, int k_n, int rows_n, unsigned char *g_tbls, unsigned char **data_n,
+                                    unsigned char **coding_n, int len_l, int k_l, int rows_l,
+                                    unsigned char **data_l, unsigned char **coding_l);
 
     /**
      * @brief Generate or decode erasure codes on blocks of data, runs baseline version.
