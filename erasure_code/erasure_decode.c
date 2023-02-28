@@ -95,12 +95,13 @@ void ec_encode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 ***buffs, struct perf *s
               ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes, t))
 }
 
-int ec_decode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, u8 *src_in_err,
-                   u8 *src_err_list, int nerrs, u8 **temp_buffs, struct perf *start, int chunksize)
+int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len, u8 *src_in_err, u8 *src_err_list, int nerrs)
 {
     int i, j, r;
-    u8 b[MMAX * KMAX], c[MMAX * KMAX], d[MMAX * KMAX];
-    u8 *recov[TEST_SOURCES];
+    u8 *b = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
+    u8 *c = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
+    u8 *d = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
+    u8 *recov[k];
 
     // Construct b by removing error rows
     for (i = 0, r = 0; i < k; i++, r++)
@@ -115,16 +116,35 @@ int ec_decode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, u8 *src_in_err,
     if (gf_invert_matrix(b, d, k) < 0)
         return BAD_MATRIX;
 
+    free(b);
+
     for (i = 0; i < nerrs; i++)
         for (j = 0; j < k; j++)
             c[k * i + j] = d[k * src_err_list[i] + j];
 
     // Recover data
     ec_init_tables(k, nerrs, c, g_tbls);
-    BENCHMARK(start, BENCHMARK_TIME,
-              ec_encode_data(TEST_LEN(chunksize, k), k, nerrs, g_tbls, recov, temp_buffs));
+    ec_encode_data(len, k, nerrs, g_tbls, recov, buffs);
+
+    free(c);
+    free(d);
 
     return 0;
+}
+
+void ec_decode_perf(int m, int k, u8 **a, u8 *g_tbls, u8 ***buffs, int len, int stripes,
+                    u8 **tot_src_in_err, u8 **tot_src_err_list, int nerrs)
+{
+    // Loop through stripes in data
+    for (int x = 0; x < stripes; x++)
+    {
+        // Decode a single stripe of data
+        int ret = ec_decode_stripe(m, k, a[x], g_tbls, buffs[x], len, tot_src_in_err[x], tot_src_err_list[x], nerrs);
+        if (ret < 0) {
+            printf("ERROR: Decoding failure\n");
+            return;
+        }
+    }
 }
 
 int main(int argc, char *argv[])
@@ -134,7 +154,7 @@ int main(int argc, char *argv[])
     /*                              Argument Parsing                              */
     /* -------------------------------------------------------------------------- */
 
-    int i, j, m, k, p, x;
+    int i, m, k, p, x;
     int chunksize, stripes, stripesize, len, datasize;
 
     // Pick test parameters
@@ -173,9 +193,12 @@ int main(int argc, char *argv[])
         buffs[x] = (u8 **)malloc(m * sizeof(u8 *));
 
     // Needed for encoding and the cauchy matrix.
-    u8 *a = (u8 *)malloc(MMAX * KMAX * sizeof(u8));
+    u8 **a = (u8 **)malloc(stripes * sizeof(u8 *));
+    for (x = 0; x < stripes; x++) {
+        a[x] = (u8 *)malloc(MMAX * KMAX * sizeof(u8));
+    }
 
-    // Needed for encoding (figure out what this is).
+    // Precomputed matrix.
     u8 *g_tbls = (u8 *)malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
 
     printf("allocating space for buff...\n");
@@ -195,10 +218,26 @@ int main(int argc, char *argv[])
         }
     }
 
+    // Create errors in sources
+    int nerrs = p;
+    
+    u8 tot_src_in_err[stripes][MMAX];
+    u8 tot_src_err_list[stripes][MMAX];
+
+    memset(tot_src_in_err, 0, sizeof(tot_src_in_err));
+
+    for (x = 0; x < stripes; x++) {
+        for (i = 0; i < nerrs; i++) {
+            tot_src_err_list[x][i] = rand() % (k + p);
+            tot_src_in_err[x][tot_src_err_list[x][i]] = 1;
+        }
+    }
+
     printf("generating random data...\n");
 
-    printf("generating cauchy matrix...\n");
-    gf_gen_cauchy1_matrix(a, m, k);
+    printf("generating cauchy matrices...\n");
+    for (x = 0; x < stripes; x++)
+        gf_gen_cauchy1_matrix(a[x], m, k);
 
     /* -------------------------------------------------------------------------- */
     /*                           Random File Generation                           */
@@ -208,9 +247,9 @@ int main(int argc, char *argv[])
     int rounds = 50;
     double totaltime5 = 0.0;
 
-    FILE *textfile, *textfile2;
-    unsigned char *text, *text2;
-    long numbytes, numbytes2;
+    FILE *textfile;
+    unsigned char *text;
+    long numbytes;
     char fname[] = "1gb-1.bin";
 
     if (access(fname, F_OK) != 0)
@@ -248,8 +287,7 @@ int main(int argc, char *argv[])
                 }
             //		printf("pos:%d\n", pos);
         }
-
-        ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes, &totaltime);
+        ec_decode_perf(m, k, a, g_tbls, buffs, len, stripes, tot_src_in_err, tot_src_err_list, nerrs);
         clock_gettime(CLOCK_REALTIME, &stop);
         double cost = (stop.tv_sec - starttime.tv_sec) + (double)(stop.tv_nsec - starttime.tv_nsec) / (double)BILLION;
         totaltime += cost;

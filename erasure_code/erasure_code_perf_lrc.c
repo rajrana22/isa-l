@@ -369,6 +369,7 @@ int main(int argc, char *argv[])
 	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime5:%lf  throughput2:%lfMB/s\n",
 			stripes_n * stripesize_n, totaltime, throughput, totaltime-totaltime5, throughput2);
 	perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
+    printf("Overall Throughput: %lf MB/s\n", throughput2);
 
 	/* -------------------------------------------------------------------------- */
 	/*                             Memory Deallocation                            */
