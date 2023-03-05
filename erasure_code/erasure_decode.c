@@ -33,13 +33,14 @@
 #include "erasure_code.h"
 #include "test.h"
 #include <time.h>
+#include <assert.h>
 #include <unistd.h>
 #define BILLION 1000000000L;
 
 // #define CACHED_TEST
 #ifdef CACHED_TEST
 // Cached test, loop many times over small dataset
-#define TEST_SOURCES 40
+#define TEST_SOURCES 50
 #define TEST_LEN(m) ((128 * 1024 / m) & ~(64 - 1))
 #define TEST_TYPE_STR "_warm"
 #else
@@ -108,7 +109,9 @@ int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len, u8 *s
     {
         while (src_in_err[r])
             r++;
+        printf("DEBUG: Accessed src_in_err[r]\n");
         recov[i] = buffs[r];
+        printf("DEBUG: Accessed buffs[r]\n");
         for (j = 0; j < k; j++)
             b[k * i + j] = a[k * r + j];
     }
@@ -154,7 +157,7 @@ int main(int argc, char *argv[])
     /*                              Argument Parsing                              */
     /* -------------------------------------------------------------------------- */
 
-    int i, m, k, p, x;
+    int i, m, k, p, x, nerrs;
     int chunksize, stripes, stripesize, len, datasize;
 
     // Pick test parameters
@@ -169,11 +172,48 @@ int main(int argc, char *argv[])
     k = atoi(argv[1]);
     p = atoi(argv[2]);
     chunksize = atoi(argv[3]);  // in kb
+
     len = chunksize * 1024;     // in bytes
     stripesize = chunksize * k; // in kb
     datasize = 1 * 1024 * 1024; // 1 gib in kb
     stripes = datasize / stripesize;
     m = k + p;
+
+    /* Create errors in sources */
+
+    nerrs = 1;
+
+    if (m > MMAX || k > KMAX || nerrs > p) {
+		printf(" Input test parameter error\n");
+		return -1;
+	}
+
+    // seed random number generator with current time
+    srand(time(NULL));
+
+    u8 tot_src_in_err[stripes][MMAX];
+    u8 tot_src_err_list[stripes][MMAX];
+
+    for (x = 0; x < stripes; x++) {
+        // Generate a random index for the current stripe
+        int random_index = rand() % m;
+
+        // Initialize the err_list array with the random index
+        const u8 err_list[] = { random_index };
+
+        // Initialize the current row of tot_src_in_err array to all 0s
+        memset(tot_src_in_err[x], 0, TEST_SOURCES);
+
+        // Copy the err_list array to the current row of tot_src_err_list array
+        memcpy(tot_src_err_list[x], err_list, nerrs);
+    }
+
+    for (x = 0; x < stripes; x++) {
+        for (i = 0; i < nerrs; i++) {
+            tot_src_in_err[x][tot_src_err_list[x][i]] = 1;
+        }
+    }
+
     printf("data_num:%d parity_num:%d m:%d chunksize:%dKB len:%dB stripesize:%dKB stripes:%d\n",
            k, p, m, chunksize, len, stripesize, stripes);
 
@@ -215,21 +255,6 @@ int main(int argc, char *argv[])
                 return -1;
             }
             buffs[x][i] = buf;
-        }
-    }
-
-    // Create errors in sources
-    int nerrs = p;
-    
-    u8 tot_src_in_err[stripes][MMAX];
-    u8 tot_src_err_list[stripes][MMAX];
-
-    memset(tot_src_in_err, 0, sizeof(tot_src_in_err));
-
-    for (x = 0; x < stripes; x++) {
-        for (i = 0; i < nerrs; i++) {
-            tot_src_err_list[x][i] = rand() % (k + p);
-            tot_src_in_err[x][tot_src_err_list[x][i]] = 1;
         }
     }
 
