@@ -126,8 +126,6 @@ int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len,
 
     // Recover data
     ec_init_tables(k, nerrs, c, g_tbls);
-
-    // DEBUG: ISSUE IS HERE
     ec_encode_data(len, k, nerrs, g_tbls, recov, temp_buffs);
 
     free(c);
@@ -201,12 +199,12 @@ int main(int argc, char *argv[])
     srand(time(NULL));
 
     u8 **tot_src_in_err = malloc(stripes * sizeof(u8*));
-    for (int i = 0; i < stripes; i++) {
+    for (i = 0; i < stripes; i++) {
         tot_src_in_err[i] = malloc(m * sizeof(u8));
     }
 
     u8 **tot_src_err_list = malloc(stripes * sizeof(u8*));
-    for (int i = 0; i < stripes; i++) {
+    for (i = 0; i < stripes; i++) {
         tot_src_err_list[i] = malloc(m * sizeof(u8));
     }
 
@@ -275,6 +273,16 @@ int main(int argc, char *argv[])
                 return -1;
             }
             buffs[x][i] = buf;
+        }
+    }
+
+    for (x = 0;  x < stripes; x++) {
+        for (i = 0; i < p; i++) {
+            if (posix_memalign(&buf, 64, len)) {
+                printf("alloc error: Fail\n");
+                return -1;
+            }
+            temp_buffs[x][i] = buf;
         }
     }
 
