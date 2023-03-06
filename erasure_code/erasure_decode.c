@@ -40,13 +40,11 @@
 // #define CACHED_TEST
 #ifdef CACHED_TEST
 // Cached test, loop many times over small dataset
-#define TEST_SOURCES 50
 #define TEST_LEN(m) ((128 * 1024 / m) & ~(64 - 1))
 #define TEST_TYPE_STR "_warm"
 #else
 #ifndef TEST_CUSTOM
 // Uncached test.  Pull from large mem base.
-#define TEST_SOURCES 150
 #define GT_L3_CACHE 1024 * 1024 * 1024 /* some number > last level cache */
 //#  define GT_L3_CACHE  1024*1024	/* some number > last level cache */
 #define TEST_NUM(chunksize, k) ((GT_L3_CACHE / (chunksize * 1024 * k)))
@@ -57,9 +55,6 @@
 #define TEST_TYPE_STR "_cus"
 #endif
 #endif
-
-#define MMAX TEST_SOURCES
-#define KMAX TEST_SOURCES
 
 #define BAD_MATRIX -1
 
@@ -96,38 +91,44 @@ void ec_encode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 ***buffs, struct perf *s
               ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes, t))
 }
 
-int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len, u8 *src_in_err, u8 *src_err_list, int nerrs)
+int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len,
+                     u8 *src_in_err, u8 *src_err_list, int nerrs, u8 **temp_buffs)
 {
     int i, j, r;
-    u8 *b = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
-    u8 *c = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
-    u8 *d = (u8 *)malloc(sizeof(u8) * MMAX * KMAX);
-    u8 *recov[k];
+    u8 *b = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *c = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *d = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *recov[m];
 
     // Construct b by removing error rows
     for (i = 0, r = 0; i < k; i++, r++)
     {
-        while (src_in_err[r])
+        while (src_in_err[r]) {
             r++;
-        printf("DEBUG: Accessed src_in_err[r]\n");
+        }
         recov[i] = buffs[r];
-        printf("DEBUG: Accessed buffs[r]\n");
-        for (j = 0; j < k; j++)
+        for (j = 0; j < k; j++) {
             b[k * i + j] = a[k * r + j];
+        }
     }
 
-    if (gf_invert_matrix(b, d, k) < 0)
+    if (gf_invert_matrix(b, d, k) < 0) {
         return BAD_MATRIX;
+    }
 
     free(b);
 
-    for (i = 0; i < nerrs; i++)
-        for (j = 0; j < k; j++)
+    for (i = 0; i < nerrs; i++) {
+        for (j = 0; j < k; j++) {
             c[k * i + j] = d[k * src_err_list[i] + j];
+        }
+    }
 
     // Recover data
     ec_init_tables(k, nerrs, c, g_tbls);
-    ec_encode_data(len, k, nerrs, g_tbls, recov, buffs);
+
+    // DEBUG: ISSUE IS HERE
+    ec_encode_data(len, k, nerrs, g_tbls, recov, temp_buffs);
 
     free(c);
     free(d);
@@ -135,19 +136,27 @@ int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len, u8 *s
     return 0;
 }
 
-void ec_decode_perf(int m, int k, u8 **a, u8 *g_tbls, u8 ***buffs, int len, int stripes,
-                    u8 **tot_src_in_err, u8 **tot_src_err_list, int nerrs)
+int ec_decode_perf(int m, int k, u8 **a, u8 *g_tbls, u8 ***buffs, int len, int stripes,
+                   u8 **tot_src_in_err, u8 **tot_src_err_list, int nerrs, u8 ***temp_buffs)
 {
     // Loop through stripes in data
     for (int x = 0; x < stripes; x++)
     {
         // Decode a single stripe of data
-        int ret = ec_decode_stripe(m, k, a[x], g_tbls, buffs[x], len, tot_src_in_err[x], tot_src_err_list[x], nerrs);
+        int ret = ec_decode_stripe(m, k, a[x], g_tbls, buffs[x], len, tot_src_in_err[x],
+                                   tot_src_err_list[x], nerrs, temp_buffs[x]);
         if (ret < 0) {
             printf("ERROR: Decoding failure\n");
-            return;
+            return -1;
+        }
+        for (int i = 0; i < nerrs; i++) {
+            if (0 != memcmp(temp_buffs[x][i], buffs[x][tot_src_err_list[x][i]], len)) {
+                printf("Fail error recovery (%d, %d, %d) - ", m, k, nerrs);
+                return -1;
+            }
         }
     }
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -183,7 +192,7 @@ int main(int argc, char *argv[])
 
     nerrs = 1;
 
-    if (m > MMAX || k > KMAX || nerrs > p) {
+    if (nerrs > p) {
 		printf(" Input test parameter error\n");
 		return -1;
 	}
@@ -191,8 +200,15 @@ int main(int argc, char *argv[])
     // seed random number generator with current time
     srand(time(NULL));
 
-    u8 tot_src_in_err[stripes][MMAX];
-    u8 tot_src_err_list[stripes][MMAX];
+    u8 **tot_src_in_err = malloc(stripes * sizeof(u8*));
+    for (int i = 0; i < stripes; i++) {
+        tot_src_in_err[i] = malloc(m * sizeof(u8));
+    }
+
+    u8 **tot_src_err_list = malloc(stripes * sizeof(u8*));
+    for (int i = 0; i < stripes; i++) {
+        tot_src_err_list[i] = malloc(m * sizeof(u8));
+    }
 
     for (x = 0; x < stripes; x++) {
         // Generate a random index for the current stripe
@@ -202,7 +218,7 @@ int main(int argc, char *argv[])
         const u8 err_list[] = { random_index };
 
         // Initialize the current row of tot_src_in_err array to all 0s
-        memset(tot_src_in_err[x], 0, TEST_SOURCES);
+        memset(tot_src_in_err[x], 0, m);
 
         // Copy the err_list array to the current row of tot_src_err_list array
         memcpy(tot_src_err_list[x], err_list, nerrs);
@@ -232,14 +248,18 @@ int main(int argc, char *argv[])
     for (x = 0; x < stripes; x++)
         buffs[x] = (u8 **)malloc(m * sizeof(u8 *));
 
+    u8 ***temp_buffs = (u8 ***)malloc(stripes * sizeof(u8 **));
+    for (x = 0; x < stripes; x++)
+        temp_buffs[x] = (u8 **)malloc(m * sizeof(u8 *));
+
     // Needed for encoding and the cauchy matrix.
     u8 **a = (u8 **)malloc(stripes * sizeof(u8 *));
     for (x = 0; x < stripes; x++) {
-        a[x] = (u8 *)malloc(MMAX * KMAX * sizeof(u8));
+        a[x] = (u8 *)malloc(m * k * sizeof(u8));
     }
 
     // Precomputed matrix.
-    u8 *g_tbls = (u8 *)malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
+    u8 *g_tbls = (u8 *)malloc(k * m * 32 * sizeof(u8));
 
     printf("allocating space for buff...\n");
     // Allocate the arrays
@@ -312,7 +332,7 @@ int main(int argc, char *argv[])
                 }
             //		printf("pos:%d\n", pos);
         }
-        ec_decode_perf(m, k, a, g_tbls, buffs, len, stripes, tot_src_in_err, tot_src_err_list, nerrs);
+        ec_decode_perf(m, k, a, g_tbls, buffs, len, stripes, tot_src_in_err, tot_src_err_list, nerrs, temp_buffs);
         clock_gettime(CLOCK_REALTIME, &stop);
         double cost = (stop.tv_sec - starttime.tv_sec) + (double)(stop.tv_nsec - starttime.tv_nsec) / (double)BILLION;
         totaltime += cost;
