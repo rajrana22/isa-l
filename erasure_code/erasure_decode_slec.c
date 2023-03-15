@@ -60,37 +60,6 @@
 
 typedef unsigned char u8;
 
-void ec_encode_data_stripes(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes, double *t)
-{
-    int x;
-    for (x = 0; x < stripes; x++)
-    {
-        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
-    }
-}
-
-void ec_encode_data_stripes_detail(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes)
-{
-    int x;
-    struct timespec start, stop;
-    for (x = 0; x < stripes; x++)
-    {
-        clock_gettime(CLOCK_REALTIME, &start);
-        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
-        clock_gettime(CLOCK_REALTIME, &stop);
-        double cost = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / (double)BILLION;
-        printf("%lf  x:%d stripes:%d  len:%d\n", cost, x, stripes, len);
-    }
-}
-
-void ec_encode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 ***buffs, struct perf *start, int len, int stripes, double *t)
-{
-    printf("init ec table..\n");
-    ec_init_tables(k, m - k, &a[k * k], g_tbls);
-    BENCHMARK(start, 0,
-              ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes, t))
-}
-
 int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len,
                      u8 *src_in_err, u8 *src_err_list, int nerrs, u8 **temp_buffs)
 {
