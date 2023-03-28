@@ -151,8 +151,6 @@ perf_tests   += erasure_code/gf_vect_mul_perf \
 		erasure_code/gf_vect_dot_prod_perf \
 		erasure_code/gf_vect_dot_prod_1tbl \
 		erasure_code/erasure_code_perf \
-        erasure_code/erasure_decode_slec \
-        erasure_code/erasure_decode_mlec \
 		erasure_code/erasure_code_perf_chunksize \
 		erasure_code/erasure_code_perf_real_chunksize \
 		erasure_code/erasure_code_perf_mlec \
@@ -161,7 +159,9 @@ perf_tests   += erasure_code/gf_vect_mul_perf \
 		erasure_code/erasure_code_perf_from_file \
 		erasure_code/erasure_code_perf_chunksize_cold \
 		erasure_code/erasure_code_base_perf \
-		erasure_code/erasure_code_update_perf
+		erasure_code/erasure_code_update_perf \
+        erasure_code/erasure_decode_slec \
+        erasure_code/erasure_decode_mlec
 
 other_tests  += erasure_code/gen_rs_matrix_limits
 

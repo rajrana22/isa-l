@@ -62,6 +62,8 @@
 
 #define BAD_MATRIX -1
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 typedef unsigned char u8;
 
 void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 *g_tbls, u8 *g_tbls2,
@@ -84,20 +86,6 @@ void ec_encode_data_stripes_inner(int m_l, int m_n, int k_l, int k_n, u8 *g_tbls
     {
         for (y = 0; y < m_n; y++)
             ec_encode_data(len, k_l, m_l - k_l, g_tbls, parities[x][y], &parities[x][y][k_l]);
-    }
-}
-
-void ec_encode_data_stripes_detail(int m_l, int k_l, u8 *g_tbls, u8 ***buffs, int len, int stripes_l)
-{
-    int x;
-    struct timespec start, stop;
-    for (x = 0; x < stripes_l; x++)
-    {
-        clock_gettime(CLOCK_REALTIME, &start);
-        ec_encode_data(len, k_l, m_l - k_l, g_tbls, buffs[x], &buffs[x][k_l]);
-        clock_gettime(CLOCK_REALTIME, &stop);
-        double cost = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / (double)BILLION;
-        printf("%lf  x:%d stripes_l:%d  len:%d\n", cost, x, stripes_l, len);
     }
 }
 
@@ -330,18 +318,22 @@ int main(int argc, char *argv[])
                cost, stripes_l, len, totaltime5, totaltime, innertime, innertime5);
     }
 
-    double outerthroughput = ((double)(stripes_l * stripesize_l)) * rounds * 1024 / 1000000 / totaltime;
-    double outerthroughput2 = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
-    double innerthroughput = ((double)(stripes_l * stripesize_l)) * rounds * 1024 / 1000000 / innertime;
-    double innerthroughput2 = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000 / (innertime - innertime5);
-    double ovr_throughput = (outerthroughput2 * innerthroughput2) / (outerthroughput2 + innerthroughput2);
-    printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize_l:%d : ", k_l, p_l, chunksize_l);
-    printf("datasize:%d  totaltime:%lf   outerthroughput:%lfMB/s  totaltime45:%lf  outerthroughput2:%lfMB/s\n",
-           stripes_l * stripesize_l, totaltime, outerthroughput, totaltime - totaltime5, outerthroughput2);
-    printf("datasize:%d  totaltime:%lf   innerthroughput:%lfMB/s  totaltime45:%lf  innerthroughput2:%lfMB/s\n",
-           stripes_l * stripesize_l, totaltime, innerthroughput, totaltime - totaltime5, innerthroughput2);
-    perf_print(start, ((long long)(stripes_l * stripesize_l)) * 1024);
-    printf("overall throughput:%lfMB/s\n", ovr_throughput);
+    /* Deprecated */
+    // double outerthroughput = ((double)(stripes_l * stripesize_l)) * rounds * 1024 / 1000000 / totaltime;
+    // double innerthroughput = ((double)(stripes_l * stripesize_l)) * rounds * 1024 / 1000000 / innertime;
+    
+    double outerthroughput = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    double innerthroughput = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000 / (innertime - innertime5);
+    double ovr_throughput = MIN(outerthroughput, innerthroughput);
+    printf("Overall Throughput: %lfMB/s\n", ovr_throughput);
+
+    /* Debugging */
+
+    // double data_encoded = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000;
+    // printf("Network Bytes Encoded: %f MB\n", data_encoded);
+    // printf("Network Time Taken: %f s\n", totaltime - totaltime5);
+    // printf("Network Throughput: %lfMB/s\n", outerthroughput);
+    // printf("Local Throughput: %lfMB/s\n", innerthroughput);
 
     for (x = 0; x < stripes_n; x++)
     {

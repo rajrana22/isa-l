@@ -76,20 +76,6 @@ void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 * g_tbls, u8 
 	}
 }
 
-void ec_encode_data_stripes_detail(int m_l, int k_l, u8 * g_tbls, u8 *** buffs, int len_l, int stripes_l)
-{
-	int x;
-	struct timespec start, stop;
-	for (x = 0; x < stripes_l; x++) {
-		clock_gettime( CLOCK_REALTIME, &start);
-		ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, buffs[x], &buffs[x][k_l]);
-		clock_gettime( CLOCK_REALTIME, &stop);
-		double cost = (stop.tv_sec - start.tv_sec)+ (double)( stop.tv_nsec - start.tv_nsec )
-               		/ (double)BILLION;
-		printf( "%lf  x:%d stripes_l:%d  len_l:%d\n", cost, x, stripes_l, len_l);
-	}
-}
-
 void ec_encode_perf(int m_l, int m_n, int k_l, int k_n, u8 * a, u8* a2, u8 * g_tbls, u8 * g_tbls2, 
 			u8 *** buffs, u8 **** parities, struct perf *start, int len_l, int len_n, 
 			int stripes_l, int stripes_n, double* t)
@@ -322,6 +308,9 @@ int main(int argc, char *argv[])
 	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
 			stripes_l * stripesize_l, totaltime, throughput, totaltime-totaltime5, throughput2);
 	perf_print(start, ((long long)(stripes_l * stripesize_l)) * 1024);
+    double data_encoded = ((double)(stripes_l * stripesize_l)) * (rounds-5) * 1024 / 1000000;
+    printf("Bytes Encoded: %f MB\n", data_encoded);
+    printf("Time Taken: %f s\n", totaltime - totaltime5);
     printf("Overall Throughput: %lf MB/s\n", throughput2);
 
 	/* -------------------------------------------------------------------------- */

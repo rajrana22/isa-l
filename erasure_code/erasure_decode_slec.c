@@ -322,13 +322,10 @@ int main(int argc, char *argv[])
     /*                           Throughput Calculation                           */
     /* -------------------------------------------------------------------------- */
 
-    double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
-    double throughput2 = ((double)(stripes * stripesize)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
-    printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
-    printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
-           stripes * stripesize, totaltime, throughput, totaltime - totaltime5, throughput2);
-    perf_print(start, ((long long)(stripes * stripesize)) * 1024);
-    printf("Overall Throughput: %lf MB/s\n", throughput2);
+    double throughput = ((double) chunksize) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    printf("Chunksize: %lf MB\n", chunksize);
+    printf("Time Taken: %lf s\n", (totaltime - totaltime5));
+    printf("Overall Throughput: %lf MB/s\n", throughput); 
 
     /* -------------------------------------------------------------------------- */
     /*                             Memory Deallocation                            */
