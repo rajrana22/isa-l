@@ -82,11 +82,12 @@ void ec_encode_data_stripes(int local_groups, int m_l, int m_n, int k_l, int k_n
 	int x, y;
 	for (x = 0; x < stripes_n; x++) {
 		ec_encode_data(len, k_n, m_n - k_n, g_tbls2, net_buffs[x], &net_buffs[x][k_n]);
-		printf("DEBUG: Global is okay\n");
-		for (y = 0; y < local_groups; y++)
-			printf("DEBUG: x, y: [%d][%d]\n", x, y);
+		// printf("DEBUG: Global is okay\n");
+		for (y = 0; y < local_groups; y++) {
+			// printf("DEBUG: x, y: [%d][%d]\n", x, y);
 			ec_encode_data(len, k_l, m_l - k_l, g_tbls, loc_buffs[x][y], &loc_buffs[x][y][k_l]);
-			printf("DEBUG: Local is okay\n");
+			// printf("DEBUG: Local is okay\n");
+		}
 	}
 }
 
@@ -160,19 +161,29 @@ int main(int argc, char *argv[])
 	int chunksize, len, datasize;
 	int stripes_l, stripesize_l;
 	int stripes_n, stripesize_n;
+	int total_local_groups;
+	int mode = 0;
 
 	/* -------------------------------------------------------------------------- */
 	/*                              Argument Parsing                              */
 	/* -------------------------------------------------------------------------- */
 
-	if (argc < 4)
-		printf("USAGE: ./erasure_code_perf_lrc k_l l r p_l chunksize\n");
+	if ((argc < 6) || (argc > 7)) {
+		printf("-----USAGE-----\n./erasure_code_perf_lrc k l r p chunksize <optional flag> \n");
+		printf("\toptional flag: 0 = LRC, 1 = Optimal LRC, default = LRC\n");
+		exit(EXIT_FAILURE);
+	}
+	else {
+		global_data = atoi(argv[1]);
+		local_groups = atoi(argv[2]);
+		global_parity = atoi(argv[3]);
+		local_parity = atoi(argv[4]);
+		chunksize = atoi(argv[5]);	// in KB
 
-	global_data = atoi(argv[1]);
-	local_groups = atoi(argv[2]);
-	global_parity = atoi(argv[3]);
-	local_parity = atoi(argv[4]);
-	chunksize = atoi(argv[5]);	// in KB
+		if (argc == 7) {
+			mode = atoi(argv[6]); // 0 for LRC, 1 for Optimal LRC
+		}
+	}
 
 	/* -------------------------------------------------------------------------- */
 	/*                            Parameter Conversions                           */
@@ -188,6 +199,8 @@ int main(int argc, char *argv[])
 	else {
 		k_l = (int)ceil(global_data / local_groups);
 	}
+
+	total_local_groups = local_groups + (p_n / k_l);
 
 	p_l = local_parity;
 	m_l = k_l + p_l;
@@ -218,6 +231,11 @@ int main(int argc, char *argv[])
 	printf("Data Shards:%d\nParity Shards:%d\nTotal Shards:%d\nStripesize:%dKB\nNumber of stripes:%d\n\n",
 		k_n, p_n, m_n, stripesize_n, stripes_n);
 
+	printf("-----GROUPS-----\n");
+	printf("Local Data Groups: %d\n", local_groups);
+	printf("Local Parity Groups: %d\n", (p_n / k_l));
+	printf("Total Local Groups: %d\n\n", total_local_groups);
+
 	printf("-----LOCAL LAYER-----\n");
 	printf("Data Shards:%d\nParity Shards:%d\nTotal Shards:%d\nStripesize:%dKB\nNumber of stripes:%d\n\n",
 		k_l, p_l, m_l, stripesize_l, stripes_l);
@@ -238,8 +256,8 @@ int main(int argc, char *argv[])
 
 	u8**** loc_buffs = (u8****) malloc(stripes_n * sizeof(u8***));
 	for (x = 0; x < stripes_n; x++) {
-		loc_buffs[x] = (u8***) malloc(local_groups * sizeof(u8**));
-		for (y = 0; y < local_groups; y++)
+		loc_buffs[x] = (u8***) malloc(total_local_groups * sizeof(u8**));
+		for (y = 0; y < total_local_groups; y++)
 			loc_buffs[x][y] = (u8**) malloc(m_l * sizeof(u8*));
 	}
 
@@ -268,7 +286,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (x = 0; x < stripes_n; x++) {
-		for (y = 0; y < local_groups; y++) {
+		for (y = 0; y < total_local_groups; y++) {
 			for (i = k_l; i < m_l; i++) {
 				// @meng: allocate TEST_LEN(chunksize,k_l) data for each disk
 				if (posix_memalign(&buf, 64, len)) {
@@ -302,7 +320,7 @@ int main(int argc, char *argv[])
 
 	if (access(fname, F_OK) != 0) {
 		// File doesn't exist, create 1 GB file with random data.
-		system("dd if=/dev/urandom of=1gb-1.bin bs=1 count=0 seek=1g");
+		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1G");
 	}
 	textfile = fopen(fname, "r");
 	fseek(textfile, 0L, SEEK_END);
@@ -318,6 +336,21 @@ int main(int argc, char *argv[])
 	/* -------------------------------------------------------------------------- */
 	/*                                  Encoding                                  */
 	/* -------------------------------------------------------------------------- */
+
+	int groups;
+
+	if (mode == 0) {
+		// LRC
+		groups = local_groups;
+	}
+	else if (mode == 1) {
+		// Optimal LRC
+		groups = total_local_groups;
+	}
+	else {
+		printf("ERROR: Invalid mode\n");
+		exit(EXIT_FAILURE);
+	}
 
 	printf("Encoding...\n");
 
@@ -338,7 +371,7 @@ int main(int argc, char *argv[])
 			// printf("pos:%d\n", pos);
 
 			for (x = 0; x < stripes_n; x++) {
-				for (y = 0; y < local_groups; y++) {
+				for (y = 0; y < groups; y++) {
 					pos = 0;
 					for (i = 0; i < k_l; i++) {
 						loc_buffs[x][y][i] = &net_buffs[x][i + (y * k_l)][pos];
@@ -348,7 +381,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		ec_encode_perf(local_groups, m_l, m_n, k_l, k_n, a, a2, g_tbls, g_tbls2, net_buffs, loc_buffs, 
+		ec_encode_perf(groups, m_l, m_n, k_l, k_n, a, a2, g_tbls, g_tbls2, net_buffs, loc_buffs, 
 					&start, len, stripes_l, stripes_n, &totaltime);
 		clock_gettime( CLOCK_REALTIME, &stop);
 		double cost = (stop.tv_sec - starttime.tv_sec)+ (double)( stop.tv_nsec - starttime.tv_nsec )
@@ -368,7 +401,7 @@ int main(int argc, char *argv[])
 	double throughput2 = ((double)(stripes_n * stripesize_n)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
 	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime5:%lf  throughput2:%lfMB/s\n",
 			stripes_n * stripesize_n, totaltime, throughput, totaltime-totaltime5, throughput2);
-	perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
+	// perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
     printf("Overall Throughput: %lf MB/s\n", throughput2);
 
 	/* -------------------------------------------------------------------------- */
@@ -384,7 +417,7 @@ int main(int argc, char *argv[])
 	free(net_buffs);
 
 	for (x = 0; x < stripes_n; x++) {
-		for (y = 0; y < local_groups; y++) {
+		for (y = 0; y < total_local_groups; y++) {
 			for (i = k_l; i < m_l; i++) {
 				free(loc_buffs[x][y][i]);
 			}
