@@ -329,11 +329,11 @@ int main(int argc, char *argv[])
 
     /* Debugging */
 
-    // double data_encoded = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000;
-    // printf("Network Bytes Encoded: %f MB\n", data_encoded);
-    // printf("Network Time Taken: %f s\n", totaltime - totaltime5);
-    // printf("Network Throughput: %lfMB/s\n", outerthroughput);
-    // printf("Local Throughput: %lfMB/s\n", innerthroughput);
+    double data_encoded = ((double)(stripes_l * stripesize_l)) * (rounds - 5) * 1024 / 1000000;
+    printf("Network Bytes Encoded: %f MB\n", data_encoded);
+    printf("Network Time Taken: %f s\n", totaltime - totaltime5);
+    printf("Network Throughput: %lfMB/s\n", outerthroughput);
+    printf("Local Throughput: %lfMB/s\n", innerthroughput);
 
     for (x = 0; x < stripes_n; x++)
     {

@@ -60,6 +60,23 @@
 
 typedef unsigned char u8;
 
+void ec_encode_data_stripes(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes)
+{
+    int x;
+    for (x = 0; x < stripes; x++)
+    {
+        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
+    }
+}
+
+void ec_encode_perf(int m, int k, u8 **a, u8 *g_tbls, u8 ***buffs, struct perf *start, int len, int stripes)
+{
+    printf("init ec table..\n");
+    ec_init_tables(k, m - k, &a[0][k * k], g_tbls);
+    BENCHMARK(start, 0,
+              ec_encode_data_stripes(m, k, g_tbls, buffs, len, stripes))
+}
+
 int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **buffs, int len,
                      u8 *src_in_err, u8 *src_err_list, int nerrs, u8 **temp_buffs)
 {
@@ -291,14 +308,13 @@ int main(int argc, char *argv[])
     printf("numbytes:%ld\n", numbytes);
 
     /* -------------------------------------------------------------------------- */
-    /*                                  Encoding                                  */
+    /*                                  Decoding                                  */
     /* -------------------------------------------------------------------------- */
 
     for (int y = 0; y < rounds; y++)
     {
         printf("...new round...\n");
         struct timespec starttime, stop;
-        clock_gettime(CLOCK_REALTIME, &starttime);
         {
             int pos = 0;
             for (x = 0; x < stripes; x++)
@@ -309,6 +325,8 @@ int main(int argc, char *argv[])
                 }
             //		printf("pos:%d\n", pos);
         }
+        ec_encode_perf(m, k, a, g_tbls, buffs, &start, len, stripes);
+        clock_gettime(CLOCK_REALTIME, &starttime);
         ec_decode_perf(m, k, a, g_tbls, buffs, len, stripes, tot_src_in_err, tot_src_err_list, nerrs, temp_buffs);
         clock_gettime(CLOCK_REALTIME, &stop);
         double cost = (stop.tv_sec - starttime.tv_sec) + (double)(stop.tv_nsec - starttime.tv_nsec) / (double)BILLION;
@@ -322,8 +340,8 @@ int main(int argc, char *argv[])
     /*                           Throughput Calculation                           */
     /* -------------------------------------------------------------------------- */
 
-    double throughput = ((double) chunksize) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
-    printf("Chunksize: %lf MB\n", chunksize);
+    double throughput = ((double)(stripes * chunksize)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    printf("Chunksize: %d MB\n", chunksize);
     printf("Time Taken: %lf s\n", (totaltime - totaltime5));
     printf("Overall Throughput: %lf MB/s\n", throughput); 
 

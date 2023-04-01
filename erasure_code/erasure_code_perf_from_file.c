@@ -73,20 +73,6 @@ void ec_encode_data_stripes(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int 
     }
 }
 
-void ec_encode_data_stripes_detail(int m, int k, u8 *g_tbls, u8 ***buffs, int len, int stripes)
-{
-    int x;
-    struct timespec start, stop;
-    for (x = 0; x < stripes; x++)
-    {
-        clock_gettime(CLOCK_REALTIME, &start);
-        ec_encode_data(len, k, m - k, g_tbls, buffs[x], &buffs[x][k]);
-        clock_gettime(CLOCK_REALTIME, &stop);
-        double cost = (stop.tv_sec - start.tv_sec) + (double)(stop.tv_nsec - start.tv_nsec) / (double)BILLION;
-        printf("%lf  x:%d stripes:%d  len:%d\n", cost, x, stripes, len);
-    }
-}
-
 void ec_encode_perf(int m, int k, u8 *a, u8 *g_tbls, u8 ***buffs, struct perf *start, int len, int stripes, double *t)
 {
     printf("init ec table..\n");
@@ -134,7 +120,7 @@ int main(int argc, char *argv[])
     /*                              Argument Parsing                              */
     /* -------------------------------------------------------------------------- */
 
-    int i, j, m, k, p, x;
+    int i, m, k, p, x;
     int chunksize, stripes, stripesize, len, datasize;
 
     // Pick test parameters
@@ -172,6 +158,9 @@ int main(int argc, char *argv[])
     for (x = 0; x < stripes; x++)
         buffs[x] = (u8 **)malloc(m * sizeof(u8 *));
 
+    printf("Size of buffer: %d stripes x %d chunks x %zu bytes\n",
+		stripes, m, sizeof(u8*));
+
     // Needed for encoding and the cauchy matrix.
     u8 *a = (u8 *)malloc(MMAX * KMAX * sizeof(u8));
 
@@ -208,9 +197,9 @@ int main(int argc, char *argv[])
     int rounds = 50;
     double totaltime5 = 0.0;
 
-    FILE *textfile, *textfile2;
-    unsigned char *text, *text2;
-    long numbytes, numbytes2;
+    FILE *textfile;
+    unsigned char *text;
+    long numbytes;
     char fname[] = "1gb-1.bin";
 
     if (access(fname, F_OK) != 0)
@@ -262,13 +251,14 @@ int main(int argc, char *argv[])
     /*                           Throughput Calculation                           */
     /* -------------------------------------------------------------------------- */
 
-    double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
-    double throughput2 = ((double)(stripes * stripesize)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
-    printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize:%d : ", k, p, chunksize);
-    printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
-           stripes * stripesize, totaltime, throughput, totaltime - totaltime5, throughput2);
-    perf_print(start, ((long long)(stripes * stripesize)) * 1024);
-    printf("Overall Throughput: %lf MB/s\n", throughput2);
+    /* Deprecated */
+    // double throughput = ((double)(stripes * stripesize)) * rounds * 1024 / 1000000 / totaltime;
+
+
+    double throughput = ((double)(stripes * stripesize)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    printf("Bytes Encoded: %d B\n", stripes * stripesize);
+    printf("Time Taken: %lf s\n", totaltime - totaltime5);
+    printf("Overall Throughput: %lf MB/s\n", throughput);
 
     /* -------------------------------------------------------------------------- */
     /*                             Memory Deallocation                            */
