@@ -200,6 +200,8 @@ int main(int argc, char *argv[])
 		k_l = (int)ceil(global_data / local_groups);
 	}
 
+	total_local_groups = local_groups + (p_n / k_l);
+
 	p_l = local_parity;
 	m_l = k_l + p_l;
 
@@ -349,6 +351,21 @@ int main(int argc, char *argv[])
 	/* -------------------------------------------------------------------------- */
 	/*                                  Encoding                                  */
 	/* -------------------------------------------------------------------------- */
+
+	int groups;
+
+	if (mode == 0) {
+		// LRC
+		groups = local_groups;
+	}
+	else if (mode == 1) {
+		// Optimal LRC
+		groups = total_local_groups;
+	}
+	else {
+		printf("ERROR: Invalid mode\n");
+		exit(EXIT_FAILURE);
+	}
 
 	printf("Encoding...\n");
 

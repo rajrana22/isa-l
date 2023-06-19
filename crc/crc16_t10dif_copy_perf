@@ -31,7 +31,7 @@ DUALCASE=1; export DUALCASE # for MKS sh
 # if CDPATH is set.
 (unset CDPATH) >/dev/null 2>&1 && unset CDPATH
 
-relink_command=""
+relink_command="(cd /home/cc/ReedSolomonEC/isa-l; { test -z \"\${LIBRARY_PATH+set}\" || unset LIBRARY_PATH || { LIBRARY_PATH=; export LIBRARY_PATH; }; }; { test -z \"\${COMPILER_PATH+set}\" || unset COMPILER_PATH || { COMPILER_PATH=; export COMPILER_PATH; }; }; { test -z \"\${GCC_EXEC_PREFIX+set}\" || unset GCC_EXEC_PREFIX || { GCC_EXEC_PREFIX=; export GCC_EXEC_PREFIX; }; }; { test -z \"\${LD_RUN_PATH+set}\" || unset LD_RUN_PATH || { LD_RUN_PATH=; export LD_RUN_PATH; }; }; { test -z \"\${LD_LIBRARY_PATH+set}\" || unset LD_LIBRARY_PATH || { LD_LIBRARY_PATH=; export LD_LIBRARY_PATH; }; }; PATH=/home/cc/.vscode-server/bin/e4503b30fc78200f846c62cf8091b76ff5547662/bin/remote-cli:/home/cc/.local/bin:/home/cc/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin; export PATH; gcc -Wall -Wchar-subscripts -Wformat-security -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wtype-limits -I ./include/ -I ./erasure_code -I ./crc -I ./igzip -I ./tests/fuzz -I ./examples/ec -g -O2 -o \$progdir/\$file crc/crc16_t10dif_copy_perf.o  ./.libs/libisal.so -Wl,-rpath -Wl,/home/cc/ReedSolomonEC/isa-l/.libs)"
 
 # This environment variable determines our operation mode.
 if test "$libtool_install_magic" = "%%%MAGIC variable%%%"; then
@@ -90,7 +90,11 @@ func_parse_lt_options ()
 
   # Print the debug banner immediately:
   if test -n "$lt_option_debug"; then
+<<<<<<< HEAD
     echo "crc16_t10dif_copy_perf:crc/crc16_t10dif_copy_perf:$LINENO: libtool wrapper (GNU libtool) 2.4.6 Debian-2.4.6-14" 1>&2
+=======
+    echo "crc16_t10dif_copy_perf:crc/crc16_t10dif_copy_perf:$LINENO: libtool wrapper (GNU libtool) 2.4.6" 1>&2
+>>>>>>> master
   fi
 }
 
@@ -182,10 +186,14 @@ func_exec_program ()
   absdir=`cd "$thisdir" && pwd`
   test -n "$absdir" && thisdir="$absdir"
 
-  program='crc16_t10dif_copy_perf'
+  program=lt-'crc16_t10dif_copy_perf'
   progdir="$thisdir/.libs"
 
+  if test ! -f "$progdir/$program" ||
+     { file=`ls -1dt "$progdir/$program" "$progdir/../$program" 2>/dev/null | /usr/bin/sed 1q`; \
+       test "X$file" != "X$progdir/$program"; }; then
 
+<<<<<<< HEAD
   if test -f "$progdir/$program"; then
     # Add our own library path to LD_LIBRARY_PATH
     LD_LIBRARY_PATH="/home/cc/ReedSolomonEC/isa-l/.libs:$LD_LIBRARY_PATH"
@@ -195,7 +203,33 @@ func_exec_program ()
     LD_LIBRARY_PATH=`$ECHO "$LD_LIBRARY_PATH" | /usr/bin/sed 's/::*$//'`
 
     export LD_LIBRARY_PATH
+=======
+    file="$$-$program"
 
+    if test ! -d "$progdir"; then
+      mkdir "$progdir"
+    else
+      rm -f "$progdir/$file"
+    fi
+
+    # relink executable if necessary
+    if test -n "$relink_command"; then
+      if relink_command_output=`eval $relink_command 2>&1`; then :
+      else
+	$ECHO "$relink_command_output" >&2
+	rm -f "$progdir/$file"
+	exit 1
+      fi
+    fi
+>>>>>>> master
+
+    mv -f "$progdir/$file" "$progdir/$program" 2>/dev/null ||
+    { rm -f "$progdir/$program";
+      mv -f "$progdir/$file" "$progdir/$program"; }
+    rm -f "$progdir/$file"
+  fi
+
+  if test -f "$progdir/$program"; then
     if test "$libtool_execute_magic" != "%%%MAGIC variable%%%"; then
       # Run the actual program with our arguments.
       func_exec_program ${1+"$@"}
