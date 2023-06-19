@@ -30,60 +30,55 @@
 
 DEFINE_INTERFACE_DISPATCHER(gf_vect_dot_prod)
 {
-	unsigned long auxval = getauxval(AT_HWCAP);
+    unsigned long auxval = getauxval(AT_HWCAP);
 
-	if (auxval & HWCAP_SVE)
-		return PROVIDER_INFO(gf_vect_dot_prod_sve);
-	if (auxval & HWCAP_ASIMD)
-		return PROVIDER_INFO(gf_vect_dot_prod_neon);
-	return PROVIDER_BASIC(gf_vect_dot_prod);
-
+    if (auxval & HWCAP_SVE)
+        return PROVIDER_INFO(gf_vect_dot_prod_sve);
+    if (auxval & HWCAP_ASIMD)
+        return PROVIDER_INFO(gf_vect_dot_prod_neon);
+    return PROVIDER_BASIC(gf_vect_dot_prod);
 }
 
 DEFINE_INTERFACE_DISPATCHER(gf_vect_mad)
 {
-	unsigned long auxval = getauxval(AT_HWCAP);
+    unsigned long auxval = getauxval(AT_HWCAP);
 
-	if (auxval & HWCAP_SVE)
-		return PROVIDER_INFO(gf_vect_mad_sve);
-	if (auxval & HWCAP_ASIMD)
-		return PROVIDER_INFO(gf_vect_mad_neon);
-	return PROVIDER_BASIC(gf_vect_mad);
-
+    if (auxval & HWCAP_SVE)
+        return PROVIDER_INFO(gf_vect_mad_sve);
+    if (auxval & HWCAP_ASIMD)
+        return PROVIDER_INFO(gf_vect_mad_neon);
+    return PROVIDER_BASIC(gf_vect_mad);
 }
 
 DEFINE_INTERFACE_DISPATCHER(ec_encode_data)
 {
-	unsigned long auxval = getauxval(AT_HWCAP);
+    unsigned long auxval = getauxval(AT_HWCAP);
 
-	if (auxval & HWCAP_SVE)
-		return PROVIDER_INFO(ec_encode_data_sve);
-	if (auxval & HWCAP_ASIMD)
-		return PROVIDER_INFO(ec_encode_data_neon);
-	return PROVIDER_BASIC(ec_encode_data);
-
+    if (auxval & HWCAP_SVE)
+        return PROVIDER_INFO(ec_encode_data_sve);
+    if (auxval & HWCAP_ASIMD)
+        return PROVIDER_INFO(ec_encode_data_neon);
+    return PROVIDER_BASIC(ec_encode_data);
 }
 
 DEFINE_INTERFACE_DISPATCHER(ec_encode_data_update)
 {
-	unsigned long auxval = getauxval(AT_HWCAP);
+    unsigned long auxval = getauxval(AT_HWCAP);
 
-	if (auxval & HWCAP_SVE)
-		return PROVIDER_INFO(ec_encode_data_update_sve);
-	if (auxval & HWCAP_ASIMD)
-		return PROVIDER_INFO(ec_encode_data_update_neon);
-	return PROVIDER_BASIC(ec_encode_data_update);
-
+    if (auxval & HWCAP_SVE)
+        return PROVIDER_INFO(ec_encode_data_update_sve);
+    if (auxval & HWCAP_ASIMD)
+        return PROVIDER_INFO(ec_encode_data_update_neon);
+    return PROVIDER_BASIC(ec_encode_data_update);
 }
 
 DEFINE_INTERFACE_DISPATCHER(gf_vect_mul)
 {
-	unsigned long auxval = getauxval(AT_HWCAP);
+    unsigned long auxval = getauxval(AT_HWCAP);
 
-	if (auxval & HWCAP_SVE)
-		return PROVIDER_INFO(gf_vect_mul_sve);
-	if (auxval & HWCAP_ASIMD)
-		return PROVIDER_INFO(gf_vect_mul_neon);
-	return PROVIDER_BASIC(gf_vect_mul);
-
+    if (auxval & HWCAP_SVE)
+        return PROVIDER_INFO(gf_vect_mul_sve);
+    if (auxval & HWCAP_ASIMD)
+        return PROVIDER_INFO(gf_vect_mul_neon);
+    return PROVIDER_BASIC(gf_vect_mul);
 }

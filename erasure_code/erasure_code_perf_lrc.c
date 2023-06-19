@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 	int chunksize, len, datasize;
 	int stripes_l, stripesize_l;
 	int stripes_n, stripesize_n;
-	int total_local_groups;
+	int groups;
 	int mode = 0;
 
 	/* -------------------------------------------------------------------------- */
@@ -222,6 +222,20 @@ int main(int argc, char *argv[])
 		stripes_l = datasize / stripesize_l;
 	}
 
+
+	if (mode == 0) {
+		// LRC
+		groups = local_groups;
+	}
+	else if (mode == 1) {
+		// Optimal LRC
+        groups = local_groups + (p_n / k_l);
+	}
+	else {
+		printf("ERROR: Invalid mode\n");
+		exit(EXIT_FAILURE);
+	}
+
 	printf("\nChunksize in kilobytes:%dKB\nChunksize in bytes:%dB\n", chunksize, len);
 
 	printf("Data size: %i B = %i KB = %0.2f MB = %0.2f GB\n\n", datasize * 1024, datasize,
@@ -232,9 +246,10 @@ int main(int argc, char *argv[])
 		k_n, p_n, m_n, stripesize_n, stripes_n);
 
 	printf("-----GROUPS-----\n");
-	printf("Local Data Groups: %d\n", local_groups);
-	printf("Local Parity Groups: %d\n", (p_n / k_l));
-	printf("Total Local Groups: %d\n\n", total_local_groups);
+	printf("Local Data Groups: %d\n\n", local_groups);
+    if (mode == 1) {
+        printf("Local Parity Groups: %d\n", (p_n / k_l));
+    }
 
 	printf("-----LOCAL LAYER-----\n");
 	printf("Data Shards:%d\nParity Shards:%d\nTotal Shards:%d\nStripesize:%dKB\nNumber of stripes:%d\n\n",
@@ -256,8 +271,8 @@ int main(int argc, char *argv[])
 
 	u8**** loc_buffs = (u8****) malloc(stripes_n * sizeof(u8***));
 	for (x = 0; x < stripes_n; x++) {
-		loc_buffs[x] = (u8***) malloc(total_local_groups * sizeof(u8**));
-		for (y = 0; y < total_local_groups; y++)
+		loc_buffs[x] = (u8***) malloc(groups * sizeof(u8**));
+		for (y = 0; y < groups; y++)
 			loc_buffs[x][y] = (u8**) malloc(m_l * sizeof(u8*));
 	}
 
@@ -286,7 +301,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (x = 0; x < stripes_n; x++) {
-		for (y = 0; y < total_local_groups; y++) {
+		for (y = 0; y < groups; y++) {
 			for (i = k_l; i < m_l; i++) {
 				// @meng: allocate TEST_LEN(chunksize,k_l) data for each disk
 				if (posix_memalign(&buf, 64, len)) {
@@ -320,7 +335,7 @@ int main(int argc, char *argv[])
 
 	if (access(fname, F_OK) != 0) {
 		// File doesn't exist, create 1 GB file with random data.
-		system("dd if=/dev/zero of=1gb-1.bin bs=1 count=0 seek=1G");
+		system("dd if=/dev/urandom of=1gb-1.bin bs=1 count=0 seek=1G");
 	}
 	textfile = fopen(fname, "r");
 	fseek(textfile, 0L, SEEK_END);
@@ -360,8 +375,6 @@ int main(int argc, char *argv[])
 		clock_gettime( CLOCK_REALTIME, &starttime);
 		{
 			int pos = 0;
-			// printf("stripes_n: %d\n", stripes_n);
-			// printf("k_n: %d\n", k_n);
 			for (x = 0; x < stripes_n; x++) {
 				for (i = 0; i < k_n; i++) {
 					net_buffs[x][i] = &text[pos];
@@ -369,11 +382,18 @@ int main(int argc, char *argv[])
 				}
 			}
 			// printf("pos:%d\n", pos);
+            // k_n = 8
+            // groups = 2
+            // k_l = 4
 
 			for (x = 0; x < stripes_n; x++) {
 				for (y = 0; y < groups; y++) {
 					pos = 0;
 					for (i = 0; i < k_l; i++) {
+                        // if (z == 0 && x == 0) {
+                        //     printf("loc_buffs index: [%d][%d]\n", y, i);
+                        //     printf("net_buffs index: %d\n", i + (y * k_l));
+                        // }
 						loc_buffs[x][y][i] = &net_buffs[x][i + (y * k_l)][pos];
 						pos += len;
 					}
@@ -397,11 +417,13 @@ int main(int argc, char *argv[])
 	/*                           Throughput Calculation                           */
 	/* -------------------------------------------------------------------------- */
 
-	double throughput = ((double)(stripes_n * stripesize_n)) * rounds * 1024 / 1000000 / totaltime;
-	double throughput2 = ((double)(stripes_n * stripesize_n)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
-	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime5:%lf  throughput2:%lfMB/s\n",
-			stripes_n * stripesize_n, totaltime, throughput, totaltime-totaltime5, throughput2);
-	// perf_print(start, ((long long)(stripes_n * stripesize_n)) * 1024);
+    /* Deprecated */
+	// double throughput = ((double)(stripes_n * stripesize_n)) * rounds * 1024 / 1000000 / totaltime;
+
+	double throughput = ((double)(stripes_n * stripesize_n)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
+    printf("Bytes Encoded: %d B\n", stripes_n * stripesize_n);
+    printf("Time Taken: %lf s\n", (totaltime-totaltime5));
+    printf("Overall Throughput: %lf MB/s\n", throughput);
 
 	/* -------------------------------------------------------------------------- */
 	/*                             Memory Deallocation                            */
@@ -416,7 +438,7 @@ int main(int argc, char *argv[])
 	free(net_buffs);
 
 	for (x = 0; x < stripes_n; x++) {
-		for (y = 0; y < total_local_groups; y++) {
+		for (y = 0; y < groups; y++) {
 			for (i = k_l; i < m_l; i++) {
 				free(loc_buffs[x][y][i]);
 			}

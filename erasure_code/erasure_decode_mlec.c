@@ -65,65 +65,100 @@
 typedef unsigned char u8;
 
 void ec_encode_data_stripes(int m_l, int m_n, int k_l, int k_n, u8 * g_tbls, u8 * g_tbls2, 
-				u8 *** buffs, u8 **** parities, int len_l, int len_n, 
-				int stripes_l, int stripes_n, double *t)
+				u8 *** net_buffs, u8 **** loc_buffs, int len_l, int len_n, int stripes_n)
 {
 	int x, y;
 	for (x = 0; x < stripes_n; x++) {
-		ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, buffs[x], &buffs[x][k_n]);
+		ec_encode_data(len_n, k_n, m_n - k_n, g_tbls2, net_buffs[x], &net_buffs[x][k_n]);
 		for (y = 0; y < m_n; y++)
-			ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, parities[x][y], &parities[x][y][k_l]);
+			ec_encode_data(len_l, k_l, m_l - k_l, g_tbls, loc_buffs[x][y], &loc_buffs[x][y][k_l]);
 	}
 }
 
 void ec_encode_perf(int m_l, int m_n, int k_l, int k_n, u8 * a, u8* a2, u8 * g_tbls, u8 * g_tbls2, 
-			u8 *** buffs, u8 **** parities, struct perf *start, int len_l, int len_n, 
-			int stripes_l, int stripes_n, double* t)
+			u8 *** net_buffs, u8 **** loc_buffs, struct perf *start, int len_l, int len_n, 
+			int stripes_n)
 {
 	printf("init ec table..\n");
 	ec_init_tables(k_l, m_l - k_l, &a[k_l * k_l], g_tbls);
 	ec_init_tables(k_n, m_n - k_n, &a2[k_n * k_n], g_tbls2);
 	BENCHMARK(start, 0,
-		ec_encode_data_stripes(m_l, m_n, k_l, k_n, g_tbls, g_tbls2, buffs, parities, len_l, len_n, 
-					stripes_l, stripes_n, t))
+		ec_encode_data_stripes(m_l, m_n, k_l, k_n, g_tbls, g_tbls2, net_buffs, loc_buffs, len_l, len_n, 
+					stripes_n))
 }
 
-
-
-int ec_decode_perf(int m_l, int k_l, u8 * a, u8 * g_tbls, u8 ** buffs, u8 * src_in_err,
-		   u8 * src_err_list, int nerrs, u8 ** temp_buffs, struct perf *start, int chunksize_l)
+int ec_decode_stripe(int m, int k, u8 *a, u8 *g_tbls, u8 **net_buffs, int len,
+                     u8 *src_in_err, u8 *src_err_list, int nerrs, u8 **temp_buffs)
 {
-	int i, j, r;
-	u8 b[MMAX * KMAX], c[MMAX * KMAX], d[MMAX * KMAX];
-	u8 *recov[TEST_SOURCES];
+    int i, j, r;
+    u8 *b = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *c = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *d = (u8 *)malloc(sizeof(u8) * m * k);
+    u8 *recov[m];
 
-	// Construct b by removing error rows
-	for (i = 0, r = 0; i < k_l; i++, r++) {
-		while (src_in_err[r])
-			r++;
-		recov[i] = buffs[r];
-		for (j = 0; j < k_l; j++)
-			b[k_l * i + j] = a[k_l * r + j];
-	}
+    // Construct b by removing error rows
+    for (i = 0, r = 0; i < k; i++, r++)
+    {
+        while (src_in_err[r]) {
+            r++;
+        }
+        recov[i] = net_buffs[r];
+        for (j = 0; j < k; j++) {
+            b[k * i + j] = a[k * r + j];
+        }
+    }
 
-	if (gf_invert_matrix(b, d, k_l) < 0)
-		return BAD_MATRIX;
+    if (gf_invert_matrix(b, d, k) < 0) {
+        return BAD_MATRIX;
+    }
 
-	for (i = 0; i < nerrs; i++)
-		for (j = 0; j < k_l; j++)
-			c[k_l * i + j] = d[k_l * src_err_list[i] + j];
+    free(b);
 
-	// Recover data
-	ec_init_tables(k_l, nerrs, c, g_tbls);
-	BENCHMARK(start, BENCHMARK_TIME,
-		  ec_encode_data(TEST_LEN(chunksize_l,k_l), k_l, nerrs, g_tbls, recov, temp_buffs));
+    for (i = 0; i < nerrs; i++) {
+        for (j = 0; j < k; j++) {
+            c[k * i + j] = d[k * src_err_list[i] + j];
+        }
+    }
 
-	return 0;
+    // Recover data
+    ec_init_tables(k, nerrs, c, g_tbls);
+    ec_encode_data(len, k, nerrs, g_tbls, recov, temp_buffs);
+
+    free(c);
+    free(d);
+
+    return 0;
 }
+
+int ec_decode_perf(int m_l, int m_n, int k_l, u8 **a2, u8 *g_tbls2, u8 ***loc_buffs, int len_l, int stripes_n,
+    u8 ***tot_src_in_err, u8 ***tot_src_err_list, int nerrs, u8 ***temp_buffs)
+{
+    // Loop through stripes in data
+    for (int x = 0; x < stripes_n; x++)
+    {
+        for (int y = 0; y < m_n) {
+            // Decode a single stripe of data
+            int ret = ec_decode_stripe(m_l, k_l, a[x][y], g_tbls2, loc_buffs[x][y], len_l, tot_src_in_err[x][y],
+                                    tot_src_err_list[x][y], nerrs, temp_buffs[x][y]);
+            if (ret < 0) {
+                printf("ERROR: Decoding failure\n");
+                return -1;
+            }
+            for (int i = 0; i < nerrs; i++) {
+                if (0 != memcmp(temp_buffs[x][y][i], loc_buffs[x][y][tot_src_err_list[x][i]], len_l)) {
+                    printf("Fail error recovery (%d, %d, %d) - ", m_l, k_l, nerrs);
+                    return -1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 
 int main(int argc, char *argv[])
 {
-	int i, x, y, z;
+	int i, j, x, y, z, nerrs;
 	int m_l, k_l, p_l;
 	int k_n,p_n,m_n;
 	int chunksize_l, stripes_l, stripesize_l, len_l, datasize;
@@ -139,9 +174,8 @@ int main(int argc, char *argv[])
 	k_l = 10;
 	p_l = 4;
 
-	if (argc < 6)
+	if (argc < 4)
 		printf("USAGE: ./erasure_code_perf_mlec net_data net_parity loc_data loc_parity chunksize_l\n");
-		exit(EXIT_FAILURE);
 
 	k_n = atoi(argv[1]);
 	p_n = atoi(argv[2]);
@@ -163,6 +197,59 @@ int main(int argc, char *argv[])
 	stripes_l = datasize / stripesize_l;
 	m_l = k_l + p_l;
 	m_n = k_n + p_n;
+
+    /* Create errors in sources */
+
+    nerrs = 1;
+
+    if (nerrs > p_l) {
+		printf(" Input test parameter error\n");
+		return -1;
+	}
+
+    // seed random number generator with current time
+    srand(time(NULL));
+
+    u8 ***tot_src_in_err = malloc(stripes_n * sizeof(u8**));
+    for (i = 0; i < stripes_n; i++) {
+        tot_src_in_err[i] = malloc(m_n * sizeof(u8*));
+        for (j = 0; j < m_n; j++) {
+            tot_src_in_err[i][j] = malloc(m_l * sizeof(u8));
+        }
+    }
+
+    u8 ***tot_src_err_list = malloc(stripes_n * sizeof(u8**));
+    for (i = 0; i < stripes_n; i++) {
+        tot_src_err_list[i] = malloc(m_n * sizeof(u8*));
+        for (j = 0; j < m_n; j++) {
+            tot_src_err_list[i][j] = malloc(m_l * sizeof(u8));
+        }
+    }
+
+    for (x = 0; x < stripes_n; x++) {
+        for (y = 0; y < m_n; y++) {
+            // Generate a random index for the current stripe
+            int random_index = rand() % m_l;
+
+            // Initialize the err_list array with the random index
+            const u8 err_list[] = { random_index };
+
+            // Initialize the current row of tot_src_in_err array to all 0s
+            memset(tot_src_in_err[x][y], 0, m_l);
+
+            // Copy the err_list array to the current row of tot_src_err_list array
+            memcpy(tot_src_err_list[x][y], err_list, nerrs);
+        }
+    }
+
+    for (x = 0; x < stripes_n; x++) {
+        for (y = 0; y < m_n; y++) {
+            for (i = 0; i < nerrs; i++) {
+                tot_src_in_err[x][y][tot_src_err_list[x][y][i]] = 1;
+            }
+        }
+    }
+
 	printf("data_num:%d parity_num:%d m_l:%d chunksize_l:%dKB len_l:%dB stripesize_l:%dKB stripes_l:%d\n",
 		k_l, p_l, m_l, chunksize_l, len_l, stripesize_l, stripes_l);
 	printf("data_num2:%d parity_num2:%d m_n:%d chunksize_n:%dKB len_n:%dB stripesize_n:%dKB stripes_n:%d\n",
@@ -179,19 +266,35 @@ int main(int argc, char *argv[])
 	printf("stripes_l:%d\n", stripes_l);
 	printf("stripes_n:%d\n", stripes_n);
 
-	u8*** buffs2 = (u8***) malloc(stripes_n * sizeof(u8**));
+	u8*** net_buffs = (u8***) malloc(stripes_n * sizeof(u8**));
 	for (x = 0; x < stripes_n; x++)
-		buffs2[x] = (u8**) malloc(m_n * sizeof(u8*));
+		net_buffs[x] = (u8**) malloc(m_n * sizeof(u8*));
 
-	u8**** parities = (u8****) malloc(stripes_n * sizeof(u8***));
+	u8**** loc_buffs = (u8****) malloc(stripes_n * sizeof(u8***));
 	for (x = 0; x < stripes_n; x++) {
-		parities[x] = (u8***) malloc(m_n * sizeof(u8**));
+		loc_buffs[x] = (u8***) malloc(m_n * sizeof(u8**));
 		for (y = 0; y < m_n; y++)
-			parities[x][y] = (u8**) malloc(m_l * sizeof(u8*));
+			loc_buffs[x][y] = (u8**) malloc(m_l * sizeof(u8*));
 	}
 
 	u8* a2 = (u8*) malloc(MMAX * KMAX * sizeof(u8));
 	u8* a = (u8*) malloc(MMAX * KMAX * sizeof(u8));
+
+    // Needed for encoding and the cauchy matrix.
+    u8 ***a = (u8 ***)malloc(stripes_n * sizeof(u8 **));
+    for (x = 0; x < stripes; x++) {
+        a[x] = (u8 **)malloc(m_n * sizeof(u8 *));
+        for (y = 0; y < m_n; y++) {
+            a[x][y] = (u8 *)malloc(m_l * k * sizeof(u8));
+        }
+    }
+    u8 ***a2 = (u8 ***)malloc(stripes_n * sizeof(u8 **));
+    for (x = 0; x < stripes; x++) {
+        a2[x] = (u8 **)malloc(m_n * sizeof(u8 *));
+        for (y = 0; y < m_n; y++) {
+            a2[x][y] = (u8 *)malloc(m_l * k * sizeof(u8));
+        }
+    }
 
 	u8* g_tbls = (u8*) malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
 	u8* g_tbls2 = (u8*) malloc(KMAX * TEST_SOURCES * 32 * sizeof(u8));
@@ -206,7 +309,7 @@ int main(int argc, char *argv[])
 				printf("alloc error: Fail\n");
 				return -1;
 			}
-			buffs2[x][i] = buf;
+			net_buffs[x][i] = buf;
 		}
 	}
 
@@ -219,7 +322,7 @@ int main(int argc, char *argv[])
 					printf("alloc error: Fail\n");
 					return -1;
 				}
-				parities[x][y][i] = buf;
+				loc_buffs[x][y][i] = buf;
 			}
 		}
 	}
@@ -260,18 +363,17 @@ int main(int argc, char *argv[])
 	printf("numbytes:%ld\n", numbytes);
 
 	/* -------------------------------------------------------------------------- */
-	/*                                  Encoding                                  */
+	/*                                  Decoding                                  */
 	/* -------------------------------------------------------------------------- */
 
 	for (z = 0; z < rounds; z++){
 		printf("...new round...\n");
 		struct timespec starttime, stop;
-		clock_gettime( CLOCK_REALTIME, &starttime);
 		{
 			int pos = 0;
 			for (x = 0; x < stripes_n; x++) {
 				for (i = 0; i < k_n; i++) {
-					buffs2[x][i] = &text[pos];
+					net_buffs[x][i] = &text[pos];
 					pos += len_n;
 				}
 			}
@@ -280,7 +382,7 @@ int main(int argc, char *argv[])
 				for (y = 0; y < m_n; y++) {
 					pos = 0;
 					for (i = 0; i < k_l; i++) {
-						parities[x][y][i] = &buffs2[x][y][pos];
+						loc_buffs[x][y][i] = &net_buffs[x][y][pos];
 						pos += len_l;
 					}
 				}
@@ -288,8 +390,9 @@ int main(int argc, char *argv[])
 			printf("pos:%d\n", pos);
 		}
 
-		ec_encode_perf(m_l, m_n, k_l, k_n, a, a2, g_tbls, g_tbls2, buffs2, parities, 
-					&start, len_l, len_n, stripes_l, stripes_n, &totaltime);
+		ec_encode_perf(m_l, m_n, k_l, k_n, a, a2, g_tbls, g_tbls2, net_buffs, loc_buffs, &start, len_l, len_n, stripes_n);
+        clock_gettime( CLOCK_REALTIME, &starttime);
+        ec_decode_perf(m_l, m_n, k_l, a2, g_tbls2, loc_buffs, len_l, stripes_n, tot_src_in_err, tot_src_err_list, nerrs, temp_buffs);
 		clock_gettime( CLOCK_REALTIME, &stop);
 		double cost = (stop.tv_sec - starttime.tv_sec)+ (double)( stop.tv_nsec - starttime.tv_nsec )
                		/ (double)BILLION;
@@ -303,16 +406,10 @@ int main(int argc, char *argv[])
 	/*                           Throughput Calculation                           */
 	/* -------------------------------------------------------------------------- */
 
-	double throughput = ((double)(stripes_l * stripesize_l)) * rounds * 1024 / 1000000 / totaltime;
-	double throughput2 = ((double)(stripes_l * stripesize_l)) * (rounds-5) * 1024 / 1000000 / (totaltime-totaltime5);
-	printf("erasure_code_encode" TEST_TYPE_STR " data_num:%d parity_num:%d chunksize_l:%d : ", k_l, p_l, chunksize_l);
-	printf("datasize:%d  totaltime:%lf   throughput:%lfMB/s  totaltime45:%lf  throughput2:%lfMB/s\n",
-			stripes_l * stripesize_l, totaltime, throughput, totaltime-totaltime5, throughput2);
-	perf_print(start, ((long long)(stripes_l * stripesize_l)) * 1024);
-    double data_encoded = ((double)(stripes_l * stripesize_l)) * (rounds-5) * 1024 / 1000000;
-    printf("Bytes Encoded: %f MB\n", data_encoded);
-    printf("Time Taken: %f s\n", totaltime - totaltime5);
-    printf("Overall Throughput: %lf MB/s\n", throughput2);
+    double throughput = ((double)(stripes_n * m_n * chunksize_l)) * (rounds - 5) * 1024 / 1000000 / (totaltime - totaltime5);
+    printf("Chunksize: %d MB\n", chunksize_l);
+    printf("Time Taken: %lf s\n", (totaltime - totaltime5));
+    printf("Overall Throughput: %lf MB/s\n", throughput);
 
 	/* -------------------------------------------------------------------------- */
 	/*                             Memory Deallocation                            */
@@ -320,10 +417,10 @@ int main(int argc, char *argv[])
 
 	for (x = 0; x < stripes_n; x++) {
 		for (i = k_n; i < m_n; i++)
-			free(buffs2[x][i]);
-		free(buffs2[x]);
+			free(net_buffs[x][i]);
+		free(net_buffs[x]);
 	}
-	free(buffs2);
+	free(net_buffs);
 	free(a);
 	free(g_tbls);
 
