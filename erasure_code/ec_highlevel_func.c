@@ -34,7 +34,7 @@
 void ec_encode_data_sse(int len, int k, int rows, unsigned char *g_tbls, unsigned char **data,
                         unsigned char **coding)
 {
-    printf("DEBUG: ec_encode_data_sse\n");
+    // printf("DEBUG: ec_encode_data_sse\n");
 
     if (len < 16)
     {
